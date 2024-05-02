@@ -7,6 +7,7 @@ const coursesApi = apiSlice?.injectEndpoints({
     getCourse: builder.query({
       query: ({ meta, search }) =>
         `/course?searchTerm=${search}&limit=${meta.limit}&page=${meta?.page}&total=${meta?.total}`,
+      providesTags: ["course"],
     }),
 
     //add course
@@ -16,6 +17,7 @@ const coursesApi = apiSlice?.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["course"],
     }),
 
     //delete course
@@ -25,6 +27,7 @@ const coursesApi = apiSlice?.injectEndpoints({
         url: `course/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["course"],
     }),
   }),
 });

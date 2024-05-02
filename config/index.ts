@@ -1,4 +1,5 @@
-export const serverUrl = process.env.NEXT_PUBLIC_BASE_URL;
+export const serverUrl =
+  `http://localhost:2000/api/v1/` || process.env.NEXT_PUBLIC_BASE_URL;
 
 export const authSecret = process.env.AUTH_SECRET;
 
