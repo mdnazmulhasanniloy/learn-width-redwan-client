@@ -1,38 +1,36 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
 import { formatPrice } from "@/lib/format";
 import { useRemoveCourseMutation } from "@/lib/redux/features/courses/coursesApi";
 import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
-import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import AddCourseDialog from "./add-course-dialog";
+import UpdateCourseDialog from "./update-course-dialog";
+import { HandelToDeleteCourse } from "@/actions/course";
 
 type DataTableProps = {
-  data: any[]; // Change 'any' to the actual type of your data array if possible
-  meta: Record<string, any>; // Change 'Record<string, any>' to the actual type of your meta object if possible
-  setSearch: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
-  setMeta: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
+  data: any[];
+  meta: Record<string, any>;
+  setSearch: (value: any) => void;
+  setMeta: (value: any) => void;
 };
 
 const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
-  const [deleteCourse, deleteResult] = useRemoveCourseMutation();
+  const [removeCourse, removeResult] = useRemoveCourseMutation();
+  const [courseData, setCourseData] = useState({});
+  const [open, setOpen] = useState(false);
+  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
 
   useEffect(() => {
-    if (deleteResult?.isLoading) {
-      toast.loading("Deleting...", { id: "removeCourse" });
+    if (removeResult?.isLoading) {
+      toast.loading("Deleting...", { id: "course" });
     }
-    if (deleteResult?.isSuccess) {
-      toast.success("successfully deleted", { id: "removeCourse" });
-    }
-    if (deleteResult?.isError) {
-      toast.success("something was wrong course deleting failed", {
-        id: "removeCourse",
-      });
-    }
-  }, [deleteResult, meta]);
+  }, [removeResult]);
 
   //delete course
   const handelDelete = async (id: string) => {
@@ -46,11 +44,12 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteCourse(id);
+        HandelToDeleteCourse(id, removeCourse);
       }
     });
   };
 
+  console.log(data);
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">
@@ -65,11 +64,13 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
               onInput={(e) => setSearch((e.target as HTMLInputElement)?.value)}
               className="p-3 border border-sky-400"
             />
-            <Link href="/dashboard/admin/courses/create">
-              <Button variant="default" className="flex gap-2">
-                Add Course <Plus />
-              </Button>
-            </Link>
+            <Button
+              variant="default"
+              className="flex gap-2"
+              onClick={() => setOpen(!open)}
+            >
+              Add Course <Plus />
+            </Button>
           </div>
         </header>
         <div className="p-3">
@@ -120,7 +121,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                           {item?.id}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
-                          {item?.duration}
+                          {item?.duration} months
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
                           {formatPrice(item?.regularPrice)}
@@ -155,7 +156,13 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                             <Trash2 />
                           </button>
 
-                          <button className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer">
+                          <button
+                            className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
+                            onClick={() => {
+                              setUpdateDialogIsOpen(!updateDialogIsOpen),
+                                setCourseData(item);
+                            }}
+                          >
                             <FilePenLine />
                           </button>
 
@@ -195,6 +202,18 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
           </div>
         </div>
       </div>
+
+      <Dialog open={open}>
+        <AddCourseDialog setOpen={setOpen} />
+      </Dialog>
+      {courseData && updateDialogIsOpen && (
+        <Dialog open={updateDialogIsOpen}>
+          <UpdateCourseDialog
+            setOpen={setUpdateDialogIsOpen}
+            data={courseData}
+          />
+        </Dialog>
+      )}
     </div>
   );
 };

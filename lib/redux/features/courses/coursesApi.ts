@@ -20,8 +20,17 @@ const coursesApi = apiSlice?.injectEndpoints({
       invalidatesTags: ["course"],
     }),
 
+    //update course
+    updateCourse: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `course/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["course"],
+    }),
+
     //delete course
-    // delete category
     removeCourse: builder.mutation({
       query: (id) => ({
         url: `course/${id}`,
@@ -36,4 +45,5 @@ export const {
   useGetCourseQuery,
   useAddCourseMutation,
   useRemoveCourseMutation,
+  useUpdateCourseMutation,
 } = coursesApi;

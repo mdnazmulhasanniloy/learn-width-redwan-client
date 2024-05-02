@@ -12,6 +12,7 @@ import { Dialog } from "@/components/ui/dialog";
 import AddBatchDialog from "./add-batch-dialog";
 import { HandelToDeleteBatch } from "@/actions/batch";
 import UpdateBatchDialog from "./update-batch-dialog";
+import Swal from "sweetalert2";
 
 type IData = {
   data: any[];
@@ -45,18 +46,24 @@ const DataTable = ({
     if (deleteResult?.isLoading) {
       toast.loading("Deleting...", { id: "removeBatch" });
     }
-    if (deleteResult?.isSuccess) {
-      toast.success("successfully deleted", { id: "removeBatch" });
-    }
-    if (deleteResult?.isError) {
-      toast.success("something was wrong course deleting failed", {
-        id: "removeBatch",
-      });
-    }
-  }, [deleteResult, meta]);
+  }, [deleteResult]);
 
   //delete course
-  const handelDelete = async (id: string) => {};
+  const handelDelete = async (id: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        HandelToDeleteBatch(id, removeBatch);
+      }
+    });
+  };
 
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
@@ -132,7 +139,7 @@ const DataTable = ({
 
                     <td className="p-2 whitespace-nowrap text-center">
                       {item?.duration}
-                      {"M".toLocaleLowerCase()}
+                      {"months".toLocaleLowerCase()}
                     </td>
 
                     <td className="p-2 whitespace-nowrap text-center">
@@ -163,9 +170,7 @@ const DataTable = ({
                     </td>
                     <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
                       <button
-                        onClick={() =>
-                          HandelToDeleteBatch(item?._id, removeBatch)
-                        }
+                        onClick={() => handelDelete(item?._id)}
                         className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
                       >
                         <Trash2 />
