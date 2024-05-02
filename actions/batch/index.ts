@@ -104,19 +104,19 @@ export const HandelToUpdateBatch = async (
   }
 };
 
-//create batch
-export const HandelToDeleteBatch = (id: string, removeBatch: Function) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      removeBatch(id);
+//delete batch
+export const HandelToDeleteBatch = async (
+  id: string,
+  removeBatch: Function
+) => {
+  try {
+    const res = await removeBatch(id);
+    if (res.data.success) {
+      toast.success(res.data.message, { id: "removeBatch" });
+    } else if (!res.data.success) {
+      toast.error(res.data.message, { id: "removeBatch" });
     }
-  });
+  } catch (error: any) {
+    toast.error(error.message, { id: "removeBatch" });
+  }
 };

@@ -68,7 +68,7 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
     });
     return () => subscription.unsubscribe();
   });
-  console.log("object", data?._id);
+
   const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
     const id = await data?._id;
     await HandelToUpdateBatch(
