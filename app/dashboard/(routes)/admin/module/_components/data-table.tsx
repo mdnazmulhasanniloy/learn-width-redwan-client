@@ -188,7 +188,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
               variant="outline"
               size="sm"
               onClick={() => setMeta({ ...meta, page: meta?.page + 1 })}
-              disabled={Math.ceil(meta?.total / meta?.limit) === meta?.page}
+              disabled={meta?.limit / meta?.total > 1}
             >
               Next
             </Button>

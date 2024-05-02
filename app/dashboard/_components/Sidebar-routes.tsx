@@ -2,6 +2,8 @@
 import { BarChart, Compass, Layout, List } from "lucide-react";
 import SidebarItem from "./sidebar-item";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { FaIdCard } from "react-icons/fa";
 const guestRoutes = [
   {
     icon: Layout,
@@ -19,7 +21,17 @@ const adminRoutes = [
   {
     icon: List,
     label: "Courses",
-    href: "/admin/courses",
+    href: "/dashboard/admin/courses",
+  },
+  {
+    icon: BarChart,
+    label: "Batch",
+    href: "/dashboard/admin/batch",
+  },
+  {
+    icon: BarChart,
+    label: "Module",
+    href: "/dashboard/admin/module",
   },
   {
     icon: BarChart,

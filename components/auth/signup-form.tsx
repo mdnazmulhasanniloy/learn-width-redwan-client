@@ -138,9 +138,11 @@ const SignUpForm = () => {
                 "w-full border border-sky-400 bg-sky-400 hover:text-sky-400 hover:bg-transparent",
                 (!isValid || isSubmitting || isPending) && "cursor-not-allowed"
               )}
-              disabled={(!isValid && isSubmitting) || isPending}
+              disabled={!isValid && isSubmitting}
             >
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Sign in
             </Button>
           </form>

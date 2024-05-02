@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const RegisterSchema = z.object({
-  name: z.string().min(4, {
+  name: z.string({ required_error: "name is required" }).min(4, {
     message: "name must be at least 4 characters.",
   }),
   email: z
