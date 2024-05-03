@@ -35,6 +35,8 @@ export const HandelToAddBatch = async (
       toast.success(data?.message);
       setOpen(false);
       form.reset();
+      setSuccess("");
+      setError("");
     } else {
       let errorMessage = data?.message || "An error occurred";
       // Check if there are individual error messages
@@ -86,6 +88,8 @@ export const HandelToUpdateBatch = async (
       toast.success(data?.message);
       setOpen(false);
       form.reset();
+      setSuccess("");
+      setError("");
     } else {
       let errorMessage = data?.message || "An error occurred";
       // Check if there are individual error messages

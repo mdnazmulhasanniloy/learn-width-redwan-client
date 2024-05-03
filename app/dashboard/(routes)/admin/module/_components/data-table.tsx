@@ -1,14 +1,18 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
 import { formatPrice } from "@/lib/format";
-import { useRemoveCourseMutation } from "@/lib/redux/features/courses/coursesApi";
 import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
+import AddModuleDialog from "./add-module-dialog";
+import UpdateModuleDialog from "./update-module-dialog";
+import { HandelToDeleteModule } from "@/actions/module";
+import { useRemoveModuleMutation } from "@/lib/redux/features/module/moduleApi";
 
 type DataTableProps = {
   data: any[]; // Change 'any' to the actual type of your data array if possible
@@ -18,21 +22,16 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
-  const [deleteCourse, deleteResult] = useRemoveCourseMutation();
+  const [removeModule, removeResult] = useRemoveModuleMutation();
+  const [open, setOpen] = useState(false);
+  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
+  const [moduleData, setModuleData] = useState({});
 
   useEffect(() => {
-    if (deleteResult?.isLoading) {
-      toast.loading("Deleting...", { id: "removeCourse" });
+    if (removeResult?.isLoading) {
+      toast.loading("Deleting...", { id: "removeModule" });
     }
-    if (deleteResult?.isSuccess) {
-      toast.success("successfully deleted", { id: "removeCourse" });
-    }
-    if (deleteResult?.isError) {
-      toast.success("something was wrong course deleting failed", {
-        id: "removeCourse",
-      });
-    }
-  }, [deleteResult, meta]);
+  }, [removeResult]);
 
   //delete course
   const handelDelete = async (id: string) => {
@@ -46,7 +45,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteCourse(id);
+        HandelToDeleteModule(id, removeModule);
       }
     });
   };
@@ -56,20 +55,22 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">
         <header className="px-5 py-4 border-b border-gray-100">
           <div className="my-5">
-            <Title title={`Courses`} />
+            <Title title={`Modules`} />
           </div>
           <div className="flex justify-between">
             <input
               type="text"
-              placeholder="search courses"
+              placeholder="search modules"
               onInput={(e) => setSearch((e.target as HTMLInputElement)?.value)}
               className="p-3 border border-sky-400"
             />
-            <Link href="/dashboard/admin/courses/create">
-              <Button variant="default" className="flex gap-2">
-                Add Course <Plus />
-              </Button>
-            </Link>
+            <Button
+              variant="default"
+              className="flex gap-2"
+              onClick={() => setOpen(!open)}
+            >
+              Add Module <Plus />
+            </Button>
           </div>
         </header>
         <div className="p-3">
@@ -82,21 +83,18 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                   </th>
                   <th className="p-2 whitespace-nowrap w-[20%]">
                     <div className="font-semibold text-center">
-                      Course Name{" "}
+                      Module Name{" "}
                     </div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center ">Course ID</div>
+                    <div className="font-semibold text-center ">Module ID</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">Duration</div>
+                    <div className="font-semibold text-center">Course Name</div>
                   </th>
 
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">Price</div>
-                  </th>
-                  <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">Status</div>
+                    <div className="font-semibold text-center">Batch Name</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Action</div>
@@ -114,39 +112,18 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                           <div className="flex items-center">{i + 1}</div>
                         </td>
                         <td className="p-2 whitespace-nowrap   text-center">
-                          {item?.name}
+                          {item?.moduleName}
                         </td>
                         <td className="p-2 whitespace-nowrap t text-center">
                           {item?.id}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
-                          {item?.duration}
+                          {item?.course?.name}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
-                          {formatPrice(item?.regularPrice)}
+                          {item?.batch?.name}
                         </td>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          {/* isActive */}
-                          <div className="mx-auto flex w-[100px] gap-2">
-                            {/* Buttons */}
-                            {item.isActive ? (
-                              <Badge
-                                variant="outline"
-                                className="bg-green-300 text-green-700 cursor-pointer"
-                              >
-                                Active
-                              </Badge>
-                            ) : (
-                              <Badge
-                                variant="outline"
-                                className="bg-red-300 text-red-700 cursor-pointer"
-                              >
-                                Destructive
-                              </Badge>
-                            )}
-                          </div>
-                          {/* isActive */}
-                        </td>
+
                         <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
                           <button
                             onClick={() => handelDelete(item?._id)}
@@ -155,7 +132,13 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                             <Trash2 />
                           </button>
 
-                          <button className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer">
+                          <button
+                            className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
+                            onClick={() => {
+                              setUpdateDialogIsOpen(true);
+                              setModuleData(item);
+                            }}
+                          >
                             <FilePenLine />
                           </button>
 
@@ -188,13 +171,24 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
               variant="outline"
               size="sm"
               onClick={() => setMeta({ ...meta, page: meta?.page + 1 })}
-              disabled={meta?.limit / meta?.total > 1}
+              disabled={Math.ceil(meta?.total / meta?.limit) === meta?.page}
             >
               Next
             </Button>
           </div>
         </div>
       </div>
+      <Dialog open={open}>
+        <AddModuleDialog setOpen={setOpen} />
+      </Dialog>
+      {moduleData && updateDialogIsOpen && (
+        <Dialog open={updateDialogIsOpen}>
+          <UpdateModuleDialog
+            setOpen={setUpdateDialogIsOpen}
+            data={moduleData}
+          />
+        </Dialog>
+      )}
     </div>
   );
 };

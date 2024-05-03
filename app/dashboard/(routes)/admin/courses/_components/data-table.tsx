@@ -49,7 +49,6 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
     });
   };
 
-  console.log(data);
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">

@@ -7,7 +7,6 @@ import Logo from "@/app/dashboard/_components/logo";
 
 const Navbar = async () => {
   // const session = await auth();
-  // console.log("auth", session);
   return (
     <div className="p-4 border-b h-full flex items-center justify-between bg-white shadow-sm">
       <MobileSidebar />

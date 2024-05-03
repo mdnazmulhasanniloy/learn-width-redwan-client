@@ -57,9 +57,6 @@ const BatchForm = () => {
   });
 
   const { isSubmitting, isValid, errors } = form?.formState;
-  console.log("isValid", isValid);
-  console.log("isSubmitting", isSubmitting);
-  console.log("errors", errors);
 
   const onSubmit = async (values: z.infer<typeof batchSchema>) => {
     setSuccess("");
@@ -84,7 +81,6 @@ const BatchForm = () => {
           );
           errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
         }
-        console.log(errorMessage);
         setError(errorMessage);
       }
     } catch (error) {
