@@ -6,7 +6,7 @@ const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: serverUrl,
   }),
-  tagTypes: ["course", "batch"],
+  tagTypes: ["course", "batch", "module"],
   endpoints: (builder) => ({}),
 });
 

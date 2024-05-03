@@ -74,6 +74,7 @@ body,
 @layer base {
   * {
     @apply border-border;
+    /* color: #0889f1 */
   }
   body {
     @apply bg-background text-foreground;

@@ -8,7 +8,6 @@ export const getCourse = async () => {
   try {
     const res = await fetch(`${serverUrl}course`);
     const data = await res.json();
-    console.log(data);
     return data;
   } catch (error: any) {
     throw new Error(error.message);
@@ -47,6 +46,8 @@ export const HandelToAddCourse = async (
       toast.success(data?.message);
       setOpen(false);
       form.reset();
+      setSuccess("");
+      setError("");
     } else {
       let errorMessage = data?.message || "An error occurred";
       // Check if there are individual error messages
@@ -98,6 +99,8 @@ export const HandelToUpdateCourse = async (
       toast.success(data?.message);
       setOpen(false);
       form.reset();
+      setSuccess("");
+      setError("");
     } else {
       let errorMessage = data?.message || "An error occurred";
       // Check if there are individual error messages
