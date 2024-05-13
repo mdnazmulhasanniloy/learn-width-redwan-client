@@ -22,6 +22,7 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
   const [addCourse, { isLoading }] = useAddCourseMutation();
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof coursesSchema>>({
     resolver: zodResolver(coursesSchema),
@@ -34,7 +35,34 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
     },
   });
 
+  const handleThumbnailChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event?.target?.files && event?.target?.files[0];
+    if (file) {
+      setThumbnail(file);
+    }
+  };
+
+  const HandelChangeDuration = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const duration: number = parseInt(event.target.value);
+    form.setValue("duration", duration);
+  };
+  const HandelChangeRegularPrice = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const regularPrice: number = parseInt(event.target.value);
+
+    form.setValue("regularPrice", regularPrice);
+  };
+
   const onSubmit = async (values: z.infer<typeof coursesSchema>) => {
+    // Add thumbnail to values object
+    values = {
+      ...values,
+      thumbnail: thumbnail,
+    };
+    // console.log(updatedValues.thumbnail);
     await HandelToAddCourse(
       addCourse,
       values,
@@ -57,6 +85,9 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <CourseForm
+          handleThumbnailChange={handleThumbnailChange}
+          HandelChangeDuration={HandelChangeDuration}
+          HandelChangeRegularPrice={HandelChangeRegularPrice}
           setOpen={setOpen}
           error={error}
           success={success}
