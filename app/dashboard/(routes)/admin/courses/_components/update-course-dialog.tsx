@@ -18,11 +18,12 @@ type IUpdateCourseProps = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   data: any;
 };
+
 const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
   const [updateCourse, { isLoading }] = useUpdateCourseMutation();
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
-
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
   const form = useForm<z.infer<typeof updateCoursesSchema>>({
     resolver: zodResolver(updateCoursesSchema),
     defaultValues: {
@@ -57,6 +58,7 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <CourseForm
+          setThumbnail={setThumbnail}
           setOpen={setOpen}
           error={error}
           success={success}

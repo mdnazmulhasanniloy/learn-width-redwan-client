@@ -21,6 +21,9 @@ type ICourseFormProps = {
   onSubmit: any;
   isLoading: boolean;
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
+  handleThumbnailChange: Function;
+  HandelChangeRegularPrice: Function;
+  HandelChangeDuration: Function;
 };
 
 const CourseForm = ({
@@ -30,8 +33,12 @@ const CourseForm = ({
   form,
   onSubmit,
   isLoading,
+  handleThumbnailChange,
+  HandelChangeDuration,
+  HandelChangeRegularPrice,
 }: ICourseFormProps) => {
   const { isSubmitting } = form.formState;
+
   return (
     <div className="py-4">
       <FormError message={error} />
@@ -70,8 +77,10 @@ const CourseForm = ({
                     <Input
                       type="file"
                       {...field}
+                      onChange={(e) => handleThumbnailChange(e)}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Current Batch"
+                      accept="image/png, image/jpeg, image/jpg"
                     />
                   </FormControl>
                   <FormMessage />
@@ -91,6 +100,7 @@ const CourseForm = ({
                     <Input
                       type="number"
                       {...field}
+                      onChange={(e) => HandelChangeDuration(e)}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Course Duration"
                     />
@@ -109,6 +119,7 @@ const CourseForm = ({
                     <Input
                       type="number"
                       {...field}
+                      onChange={(e) => HandelChangeRegularPrice(e)}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Regular Price"
                     />
@@ -136,7 +147,7 @@ const CourseForm = ({
             />
           </div>
 
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center justify-end gap-x-5">
             <Button
               type="button"
               variant={"outline"}

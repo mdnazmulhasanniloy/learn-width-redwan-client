@@ -1,7 +1,6 @@
 import { serverUrl } from "@/config";
 import { coursesSchema, updateCoursesSchema } from "@/schema/courseSchema";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import { z } from "zod";
 
 export const getCourse = async () => {
@@ -30,22 +29,47 @@ export const HandelToAddCourse = async (
       | ((prev: string | undefined) => string | undefined)
   ) => void,
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void,
-  form: any
+  forms: any
 ) => {
+  const ValidImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+
   try {
     setSuccess("");
     setError("");
-    values.duration = parseInt(values.duration);
-    values.regularPrice = parseInt(values.regularPrice);
 
-    const res: any = await addCourse(values);
+    //check thumbnail type
+    if (
+      values.thumbnail &&
+      !ValidImageTypes.find((type) => type === values.thumbnail.type)
+    ) {
+      setError("Only .jpg,.jpeg and .png  formats are supported.");
+      return;
+    }
+
+    // const form = new FormData();
+    // form.append("image", values?.thumbnail);
+
+    // const res: any = await addCourse({ ...values, form });
+    const formData = new FormData();
+
+    formData.append("thumbnail", values.thumbnail); // Use consistent key
+
+    // Append other form data
+    Object.entries(values).forEach(([key, value]) => {
+      if (key !== "thumbnail") {
+        formData.append(key, value);
+      }
+    });
+
+    const res: any = await addCourse(formData);
+
     const data: any = { ...res.data };
 
     if (data?.success) {
       setSuccess(`${data?.message}`);
       toast.success(data?.message);
       setOpen(false);
-      form.reset();
+      forms.reset();
       setSuccess("");
       setError("");
     } else {
@@ -88,9 +112,6 @@ export const HandelToUpdateCourse = async (
   setSuccess("");
   setError("");
   try {
-    values.duration = parseInt(values.duration);
-    values.regularPrice = parseInt(values.regularPrice);
-
     const res: any = await updateCourse({ id, data: values });
     const data: any = { ...res.data };
 

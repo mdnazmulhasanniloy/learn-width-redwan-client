@@ -1,20 +1,12 @@
-"use client";
-import { useGetCourseQuery } from "@/lib/redux/features/courses/coursesApi";
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DataTable from "./_components/data-table";
-import {
-  awsAccessKey,
-  awsBucketName,
-  awsRegion,
-  awsSecretAccessKey,
-  serverUrl,
-} from "@/config";
 import Loader from "@/components/ui/loader";
+import { useGetLectureQuery } from "@/lib/redux/features/lecture/lectureApi";
 
-const CoursesPage = () => {
+const LecturePage = () => {
   const [meta, setMeta] = useState({ limit: 10, page: 1, total: 5 });
   const [search, setSearch] = useState("");
-  const { data, isLoading, isSuccess } = useGetCourseQuery({
+  const { data, isLoading, isSuccess } = useGetLectureQuery({
     meta,
     search,
   });
@@ -35,4 +27,4 @@ const CoursesPage = () => {
   );
 };
 
-export default CoursesPage;
+export default LecturePage;
