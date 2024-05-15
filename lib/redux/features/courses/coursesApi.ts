@@ -12,14 +12,11 @@ const coursesApi = apiSlice?.injectEndpoints({
 
     //add course
     addCourse: builder.mutation({
-      query: (data) => (
-        console.log("eeeeeeeeeeeeeeee", data),
-        {
-          url: "/course/create-course",
-          method: "POST",
-          body: data,
-        }
-      ),
+      query: (data) => ({
+        url: "/course/create-course",
+        method: "POST",
+        body: data,
+      }),
       invalidatesTags: ["course"],
     }),
 
