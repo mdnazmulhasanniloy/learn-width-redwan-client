@@ -22,8 +22,6 @@ type ICourseFormProps = {
   isLoading: boolean;
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   handleThumbnailChange: Function;
-  HandelChangeRegularPrice: Function;
-  HandelChangeDuration: Function;
 };
 
 const CourseForm = ({
@@ -34,8 +32,6 @@ const CourseForm = ({
   onSubmit,
   isLoading,
   handleThumbnailChange,
-  HandelChangeDuration,
-  HandelChangeRegularPrice,
 }: ICourseFormProps) => {
   const { isSubmitting } = form.formState;
 
@@ -100,7 +96,6 @@ const CourseForm = ({
                     <Input
                       type="number"
                       {...field}
-                      onChange={(e) => HandelChangeDuration(e)}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Course Duration"
                     />
@@ -119,7 +114,6 @@ const CourseForm = ({
                     <Input
                       type="number"
                       {...field}
-                      onChange={(e) => HandelChangeRegularPrice(e)}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Regular Price"
                     />

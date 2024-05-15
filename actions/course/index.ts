@@ -111,13 +111,32 @@ export const HandelToUpdateCourse = async (
 ) => {
   setSuccess("");
   setError("");
+
+  const validImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+  const formData = new FormData();
+
   try {
-    const res: any = await updateCourse({ id, data: values });
-    const data: any = { ...res.data };
+    if (values.thumbnail) {
+      if (!validImageTypes.includes(values.thumbnail.type)) {
+        setError("Only .jpg, .jpeg, and .png formats are supported.");
+        return;
+      }
+      formData.append("thumbnail", values.thumbnail);
+    }
+
+    // Append other form data
+    await Object.entries(values).forEach(([key, value]) => {
+      if (key !== "thumbnail") {
+        formData.append(key, value);
+      }
+    });
+
+    const res: any = await updateCourse({ id, data: formData });
+    const data: any = res.data;
 
     if (data?.success) {
-      setSuccess(`${data?.message}`);
-      toast.success(data?.message);
+      setSuccess(data.message);
+      toast.success(data.message);
       setOpen(false);
       form.reset();
       setSuccess("");
@@ -126,19 +145,91 @@ export const HandelToUpdateCourse = async (
       let errorMessage = data?.message || "An error occurred";
       // Check if there are individual error messages
       if (data?.errorMessages) {
-        // Format the individual error message
-        const individualErrorMessage = data?.errorMessages?.map(
-          (error: { path: string; message: string }) =>
-            `${error.path}: ${error.message} \n`
-        );
-        errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
+        // Format the individual error messages
+        const individualErrorMessages = data.errorMessages
+          .map(
+            (error: { path: string; message: string }) =>
+              `${error.path}: ${error.message}`
+          )
+          .join("\n");
+        errorMessage = `${errorMessage}:\n${individualErrorMessages}`;
       }
       setError(errorMessage);
     }
   } catch (error) {
-    setError("course updating failed");
+    setError("Course updating failed");
   }
 };
+
+// export const HandelToUpdateCourse = async (
+//   id: string,
+//   updateCourse: Function,
+//   values: z.infer<typeof updateCoursesSchema>,
+//   setSuccess: (
+//     value:
+//       | string
+//       | undefined
+//       | ((prev: string | undefined) => string | undefined)
+//   ) => void,
+//   setError: (
+//     value:
+//       | string
+//       | undefined
+//       | ((prev: string | undefined) => string | undefined)
+//   ) => void,
+//   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void,
+//   form: any
+// ) => {
+//   setSuccess("");
+//   setError("");
+//   const ValidImageTypes = ["image/png", "image/jpeg", "image/jpg"];
+//   const formData = new FormData();
+//   try {
+//     if (values.thumbnail) {
+//       if (
+//         values.thumbnail &&
+//         !ValidImageTypes.find((type) => type === values.thumbnail.type)
+//       ) {
+//         setError("Only .jpg,.jpeg and .png  formats are supported.");
+//         return;
+//       }
+//       formData.append("thumbnail", values.thumbnail); // Use consistent key
+//     }
+
+//     // Append other form data
+//     Object.entries(values).forEach(([key, value]) => {
+//       if (key !== "thumbnail") {
+//         formData.append(key, value);
+//       }
+//     });
+
+//     const res: any = await updateCourse({ id, formData });
+//     const data: any = { ...res.data };
+
+//     if (data?.success) {
+//       setSuccess(`${data?.message}`);
+//       toast.success(data?.message);
+//       setOpen(false);
+//       form.reset();
+//       setSuccess("");
+//       setError("");
+//     } else {
+//       let errorMessage = data?.message || "An error occurred";
+//       // Check if there are individual error messages
+//       if (data?.errorMessages) {
+//         // Format the individual error message
+//         const individualErrorMessage = data?.errorMessages?.map(
+//           (error: { path: string; message: string }) =>
+//             `${error.path}: ${error.message} \n`
+//         );
+//         errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
+//       }
+//       setError(errorMessage);
+//     }
+//   } catch (error) {
+//     setError("course updating failed");
+//   }
+// };
 
 //delete batch
 export const HandelToDeleteCourse = async (

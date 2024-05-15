@@ -4,6 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Title from "@/components/ui/title";
 import React, { useState } from "react";
 import CourseForm from "./course-form";
 import { useUpdateCourseMutation } from "@/lib/redux/features/courses/coursesApi";
@@ -12,7 +13,6 @@ import { z } from "zod";
 import { updateCoursesSchema } from "@/schema/courseSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HandelToUpdateCourse } from "@/actions/course";
-import Title from "@/components/ui/title";
 
 type IUpdateCourseProps = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
@@ -35,6 +35,11 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
   });
 
   const onSubmit = async (values: z.infer<typeof updateCoursesSchema>) => {
+    values = {
+      ...values,
+      thumbnail: thumbnail,
+    };
+
     const id = await data?._id;
     await HandelToUpdateCourse(
       id,
@@ -45,6 +50,15 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
       setOpen,
       form
     );
+  };
+
+  const handleThumbnailChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event?.target?.files && event?.target?.files[0];
+    if (file) {
+      setThumbnail(file);
+    }
   };
   return (
     <DialogContent className="sm:max-w-lg">
@@ -58,7 +72,7 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <CourseForm
-          setThumbnail={setThumbnail}
+          handleThumbnailChange={handleThumbnailChange}
           setOpen={setOpen}
           error={error}
           success={success}

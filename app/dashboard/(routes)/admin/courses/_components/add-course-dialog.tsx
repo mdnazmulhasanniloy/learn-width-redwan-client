@@ -44,18 +44,6 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
     }
   };
 
-  const HandelChangeDuration = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const duration: number = parseInt(event.target.value);
-    form.setValue("duration", duration);
-  };
-  const HandelChangeRegularPrice = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const regularPrice: number = parseInt(event.target.value);
-
-    form.setValue("regularPrice", regularPrice);
-  };
-
   const onSubmit = async (values: z.infer<typeof coursesSchema>) => {
     // Add thumbnail to values object
     values = {
@@ -86,8 +74,6 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
       <div className="grid gap-4 py-4">
         <CourseForm
           handleThumbnailChange={handleThumbnailChange}
-          HandelChangeDuration={HandelChangeDuration}
-          HandelChangeRegularPrice={HandelChangeRegularPrice}
           setOpen={setOpen}
           error={error}
           success={success}
