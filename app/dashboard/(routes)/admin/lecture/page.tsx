@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import DataTable from "./_components/data-table";
 import Loader from "@/components/ui/loader";

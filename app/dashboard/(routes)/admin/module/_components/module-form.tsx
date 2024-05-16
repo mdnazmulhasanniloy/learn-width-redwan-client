@@ -25,7 +25,7 @@ type IModuleFormProps = {
   error: string | undefined;
   success: string | undefined;
   form: any;
-  onSubmit: any;
+  onSubmit: Function;
   isLoading: boolean;
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   courses: any;
@@ -164,6 +164,7 @@ const ModuleForm = ({
               variant={"outline"}
               onClick={() => {
                 setOpen(false);
+                form.reset();
               }}
             >
               Close

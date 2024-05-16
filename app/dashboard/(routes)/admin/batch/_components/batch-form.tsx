@@ -181,6 +181,7 @@ const BatchForm = ({
               variant={"outline"}
               onClick={() => {
                 setOpen(false);
+                form.reset();
               }}
             >
               Close

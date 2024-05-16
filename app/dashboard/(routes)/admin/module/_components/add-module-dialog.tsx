@@ -27,7 +27,6 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
   const [course, setCourse] = useState({});
-  const [batch, setBatch] = useState({});
 
   const form = useForm<z.infer<typeof moduleSchema>>({
     resolver: zodResolver(moduleSchema),
@@ -46,12 +45,29 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
   //batch search
   useEffect(() => {
     setBatches([]);
-    fetch(`${serverUrl}batch`)
+    fetch(`${serverUrl}batch?courseId=${course?._id}`)
       .then((response) => response.json())
       .then((data) => {
         setBatches(data?.data);
       });
-  }, []);
+  }, [course]);
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name === "course") {
+        courses?.forEach((each: { _id: string; name: string }) => {
+          if (each?._id === value?.course) {
+            setCourse({
+              _id: each?._id,
+              name: each?.name,
+            });
+            return;
+          }
+        });
+      }
+    });
+    return () => subscription.unsubscribe();
+  });
 
   const onSubmit = async (values: z.infer<typeof moduleSchema>) => {
     await HandelToAddModule(
