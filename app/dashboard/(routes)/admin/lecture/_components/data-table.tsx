@@ -141,19 +141,19 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                           {item?.endAt}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
-                          {item?.courseId.name}
+                          {item?.courseId?.name}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
-                          {item?.batchId.name}
+                          {item?.batchId?.name}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
-                          {item?.moduleId.moduleName}
+                          {item?.moduleId?.moduleName}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
                           {/* isActive */}
                           <div className="mx-auto flex w-[100px] gap-2">
                             {/* Buttons */}
-                            {item.isActive ? (
+                            {item?.isActive ? (
                               <Badge
                                 variant="outline"
                                 className="bg-green-300 text-green-700 cursor-pointer"

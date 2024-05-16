@@ -35,6 +35,11 @@ const adminRoutes = [
   },
   {
     icon: BarChart,
+    label: "lecture",
+    href: "/dashboard/admin/lecture",
+  },
+  {
+    icon: BarChart,
     label: "Analytics",
     href: "/admin/analytics",
   },

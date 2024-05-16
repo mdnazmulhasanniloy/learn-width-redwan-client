@@ -1,7 +1,7 @@
+import * as z from "zod";
+import toast from "react-hot-toast";
 import { serverUrl } from "@/config";
 import { coursesSchema, updateCoursesSchema } from "@/schema/courseSchema";
-import toast from "react-hot-toast";
-import { z } from "zod";
 
 export const getCourse = async () => {
   try {

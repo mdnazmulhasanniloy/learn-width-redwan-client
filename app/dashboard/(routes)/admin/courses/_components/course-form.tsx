@@ -147,6 +147,7 @@ const CourseForm = ({
               variant={"outline"}
               onClick={() => {
                 setOpen(false);
+                form.reset();
               }}
             >
               Cancel
