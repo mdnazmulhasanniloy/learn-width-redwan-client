@@ -3,16 +3,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
-import { formatPrice } from "@/lib/format";
 import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import AddModuleDialog from "./add-module-dialog";
 import UpdateModuleDialog from "./update-module-dialog";
-import { HandelToDeleteModule } from "@/actions/module";
-import { useRemoveModuleMutation } from "@/lib/redux/features/module/moduleApi";
+import {
+  useRemoveModuleMutation,
+  useUpdateModuleMutation,
+} from "@/lib/redux/features/module/moduleApi";
+import { handelToActive, handelToDelete } from "@/actions/shared/shared";
 
 type DataTableProps = {
   data: any[]; // Change 'any' to the actual type of your data array if possible
@@ -22,33 +22,21 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
-  const [removeModule, removeResult] = useRemoveModuleMutation();
+  const [deleteModule, deleteResult] = useRemoveModuleMutation();
+  const [updateModule, updateResult] = useUpdateModuleMutation();
   const [open, setOpen] = useState(false);
   const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
   const [moduleData, setModuleData] = useState({});
 
   useEffect(() => {
-    if (removeResult?.isLoading) {
-      toast.loading("Deleting...", { id: "removeModule" });
+    if (deleteResult?.isLoading) {
+      toast.loading("Deleting...", { id: "removeItem" });
     }
-  }, [removeResult]);
 
-  //delete course
-  const handelDelete = async (id: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        HandelToDeleteModule(id, removeModule);
-      }
-    });
-  };
+    if (updateResult?.isLoading) {
+      toast.loading("Loading...", { id: "updateItem" });
+    }
+  }, [deleteResult, updateResult]);
 
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
@@ -123,10 +111,42 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                         <td className="p-2 whitespace-nowrap text-center">
                           {item?.batch?.name}
                         </td>
-
+                        <td className="p-2 whitespace-nowrap text-center">
+                          {/* isActive */}
+                          <div
+                            className="mx-auto flex w-[100px] gap-2 justify-center"
+                            onClick={() =>
+                              handelToActive(
+                                item._id,
+                                !item?.isActive,
+                                updateModule
+                              )
+                            }
+                          >
+                            {/* Buttons */}
+                            {item?.isActive ? (
+                              <Badge
+                                variant="outline"
+                                className="bg-green-300 text-green-700 cursor-pointer"
+                              >
+                                Active
+                              </Badge>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className="bg-red-300 text-red-700 cursor-pointer"
+                              >
+                                Destructive
+                              </Badge>
+                            )}
+                          </div>
+                          {/* isActive */}
+                        </td>
                         <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
                           <button
-                            onClick={() => handelDelete(item?._id)}
+                            onClick={() =>
+                              handelToDelete(item?._id, deleteModule)
+                            }
                             className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
                           >
                             <Trash2 />

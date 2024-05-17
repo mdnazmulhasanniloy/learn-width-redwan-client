@@ -11,7 +11,11 @@ import Swal from "sweetalert2";
 import { HandelToDeleteCourse } from "@/actions/course";
 import AddLectureDialog from "./add-lecture-dialog";
 import UpdateLectureDialog from "./update-lecture-dialog";
-import { useRemoveLectureMutation } from "@/lib/redux/features/lecture/lectureApi";
+import {
+  useRemoveLectureMutation,
+  useUpdateLectureMutation,
+} from "@/lib/redux/features/lecture/lectureApi";
+import { handelToActive, handelToDelete } from "@/actions/shared/shared";
 
 type DataTableProps = {
   data: any[];
@@ -21,33 +25,21 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
-  const [removeLecture, removeResult] = useRemoveLectureMutation();
+  const [deleteLecture, deleteResult] = useRemoveLectureMutation();
+  const [updateLecture, updateResult] = useUpdateLectureMutation();
   const [courseData, setCourseData] = useState({});
   const [open, setOpen] = useState(false);
   const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
 
   useEffect(() => {
-    if (removeResult?.isLoading) {
-      toast.loading("Deleting...", { id: "course" });
+    if (deleteResult?.isLoading) {
+      toast.loading("Deleting...", { id: "removeItem" });
     }
-  }, [removeResult]);
 
-  //delete course
-  const handelDelete = async (id: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        HandelToDeleteCourse(id, removeLecture);
-      }
-    });
-  };
+    if (updateResult?.isLoading) {
+      toast.loading("Loading...", { id: "updateItem" });
+    }
+  }, [deleteResult, updateResult]);
 
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
@@ -138,7 +130,16 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
                           {/* isActive */}
-                          <div className="mx-auto flex w-[100px] gap-2">
+                          <div
+                            className="mx-auto flex w-[100px] gap-2 justify-center"
+                            onClick={() =>
+                              handelToActive(
+                                item._id,
+                                !item?.isActive,
+                                updateLecture
+                              )
+                            }
+                          >
                             {/* Buttons */}
                             {item?.isActive ? (
                               <Badge
@@ -160,7 +161,9 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                         </td>
                         <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
                           <button
-                            onClick={() => handelDelete(item?._id)}
+                            onClick={() =>
+                              handelToDelete(item?._id, deleteLecture)
+                            }
                             className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
                           >
                             <Trash2 />

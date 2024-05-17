@@ -103,19 +103,4 @@ export const HandelToUpdateModule = async (
   }
 };
 
-//delete module
-export const HandelToDeleteModule = async (
-  id: string,
-  removeModule: Function
-) => {
-  try {
-    const res = await removeModule(id);
-    if (res.data.success) {
-      toast.success(res.data.message, { id: "removeModule" });
-    } else if (!res.data.success) {
-      toast.error(res.data.message, { id: "removeModule" });
-    }
-  } catch (error: any) {
-    toast.error(error.message, { id: "removeModule" });
-  }
-};
+ 
