@@ -72,7 +72,7 @@ const DataTable = ({
           <div className="my-5">
             <Title title={`Batch`} />
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input
               type="text"
               placeholder="search Batch"

@@ -45,7 +45,7 @@ const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
       lectureName: undefined,
       topic: undefined,
       type: undefined,
-      isOptional: false,
+      isActive: true,
       courseId: undefined,
       batchId: undefined,
       moduleId: undefined,

@@ -40,6 +40,7 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
       duration: data.duration.toString(),
       startedAt: data.startedAt,
       courseId: courseId._id,
+      isActive: data.isActive,
     },
   });
 

@@ -42,6 +42,7 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
       moduleName: data.moduleName,
       course: course?._id,
       batch: batch?._id,
+      isActive: data.isActive,
     },
   });
 

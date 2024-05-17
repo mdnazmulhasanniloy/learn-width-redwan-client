@@ -33,6 +33,9 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
 
   const form = useForm<z.infer<typeof batchSchema>>({
     resolver: zodResolver(batchSchema),
+    defaultValues: {
+      isActive: true,
+    },
   });
 
   useEffect(() => {

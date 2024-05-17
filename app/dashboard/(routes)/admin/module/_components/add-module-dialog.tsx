@@ -30,6 +30,9 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
 
   const form = useForm<z.infer<typeof moduleSchema>>({
     resolver: zodResolver(moduleSchema),
+    defaultValues: {
+      isActive: true,
+    },
   });
 
   //course search

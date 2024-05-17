@@ -56,7 +56,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
           <div className="my-5">
             <Title title={`Lecture`} />
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input
               type="text"
               placeholder="search Lecture"
@@ -90,13 +90,6 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center"> Topic</div>
-                  </th>
-
-                  <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">Start At</div>
-                  </th>
-                  <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">End At</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Course</div>
@@ -133,12 +126,6 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
                           {item?.topic}
-                        </td>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          {item?.startAt}
-                        </td>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          {item?.endAt}
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
                           {item?.courseId?.name}

@@ -5,9 +5,9 @@ export const addLectureSchema = z.object({
   topic: z.string({ required_error: "topic is required" }),
   video: z.any(),
   type: z.string({ required_error: "type is required" }),
-  isOptional: z
-    .boolean({ required_error: "isOptional is required" })
-    .default(false)
+  isActive: z
+    .boolean({ required_error: "isActive is required" })
+    .default(true)
     .optional(),
   batchId: z.string({ required_error: "batchId is required" }),
   moduleId: z.string({ required_error: "moduleId is required" }),
@@ -21,9 +21,9 @@ export const updateLectureSchema = z.object({
   topic: z.string({ required_error: "topic is required" }).optional(),
   video: z.any().optional(),
   type: z.string({ required_error: "type is required" }).optional(),
-  isOptional: z
-    .boolean({ required_error: "isOptional is required" })
-    .default(false)
+  isActive: z
+    .boolean({ required_error: "isActive is required" })
+    .default(true)
     .optional(),
   batchId: z.string({ required_error: "batchId is required" }).optional(),
   moduleId: z.string({ required_error: "moduleId is required" }).optional(),

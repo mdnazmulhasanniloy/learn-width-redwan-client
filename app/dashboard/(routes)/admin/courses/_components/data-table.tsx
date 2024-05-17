@@ -56,7 +56,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
           <div className="my-5">
             <Title title={`Courses`} />
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input
               type="text"
               placeholder="search courses"
