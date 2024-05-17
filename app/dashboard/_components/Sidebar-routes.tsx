@@ -1,5 +1,14 @@
 "use client";
-import { BarChart, Compass, Layout, List } from "lucide-react";
+import {
+  BarChart,
+  BookOpen,
+  Compass,
+  Component,
+  GraduationCap,
+  Home,
+  Layout,
+  List,
+} from "lucide-react";
 import SidebarItem from "./sidebar-item";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -24,24 +33,24 @@ const adminRoutes = [
     href: "/dashboard/admin/courses",
   },
   {
-    icon: BarChart,
+    icon: GraduationCap,
     label: "Batch",
     href: "/dashboard/admin/batch",
   },
   {
-    icon: BarChart,
+    icon: Component,
     label: "Module",
     href: "/dashboard/admin/module",
   },
   {
-    icon: BarChart,
+    icon: BookOpen,
     label: "lecture",
     href: "/dashboard/admin/lecture",
   },
   {
-    icon: BarChart,
-    label: "Analytics",
-    href: "/admin/analytics",
+    icon: Home,
+    label: "Home",
+    href: "/",
   },
 ];
 const SidebarRoutes = () => {

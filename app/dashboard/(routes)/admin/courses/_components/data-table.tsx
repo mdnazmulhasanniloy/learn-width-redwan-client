@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
 import { formatPrice } from "@/lib/format";
-import { useRemoveCourseMutation } from "@/lib/redux/features/courses/coursesApi";
+import {
+  useRemoveCourseMutation,
+  useUpdateCourseMutation,
+} from "@/lib/redux/features/courses/coursesApi";
 import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import AddCourseDialog from "./add-course-dialog";
 import UpdateCourseDialog from "./update-course-dialog";
-import { HandelToDeleteCourse } from "@/actions/course";
+import { handelToActive, handelToDelete } from "@/actions/shared/shared";
 
 type DataTableProps = {
   data: any[];
@@ -21,33 +23,21 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
-  const [removeCourse, removeResult] = useRemoveCourseMutation();
+  const [deleteCourse, deleteResult] = useRemoveCourseMutation();
+  const [updateCourse, updateResult] = useUpdateCourseMutation();
   const [courseData, setCourseData] = useState({});
   const [open, setOpen] = useState(false);
   const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
 
   useEffect(() => {
-    if (removeResult?.isLoading) {
-      toast.loading("Deleting...", { id: "course" });
+    if (deleteResult?.isLoading) {
+      toast.loading("Deleting...", { id: "removeItem" });
     }
-  }, [removeResult]);
 
-  //delete course
-  const handelDelete = async (id: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        HandelToDeleteCourse(id, removeCourse);
-      }
-    });
-  };
+    if (updateResult?.isLoading) {
+      toast.loading("Loading...", { id: "updateItem" });
+    }
+  }, [deleteResult, updateResult]);
 
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
@@ -56,7 +46,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
           <div className="my-5">
             <Title title={`Courses`} />
           </div>
-          <div className="flex justify-between">
+          <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input
               type="text"
               placeholder="search courses"
@@ -127,7 +117,16 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                         </td>
                         <td className="p-2 whitespace-nowrap text-center">
                           {/* isActive */}
-                          <div className="mx-auto flex w-[100px] gap-2">
+                          <div
+                            className="mx-auto flex w-[100px] gap-2 justify-between"
+                            onClick={() =>
+                              handelToActive(
+                                item._id,
+                                !item?.isActive,
+                                updateCourse
+                              )
+                            }
+                          >
                             {/* Buttons */}
                             {item.isActive ? (
                               <Badge
@@ -149,7 +148,9 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                         </td>
                         <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
                           <button
-                            onClick={() => handelDelete(item?._id)}
+                            onClick={() =>
+                              handelToDelete(item?._id, deleteCourse)
+                            }
                             className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
                           >
                             <Trash2 />

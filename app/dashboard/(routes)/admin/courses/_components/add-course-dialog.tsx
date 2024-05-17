@@ -32,6 +32,7 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
       regularPrice: undefined,
       currentBatch: undefined,
       thumbnail: undefined,
+      isActive: true,
     },
   });
 

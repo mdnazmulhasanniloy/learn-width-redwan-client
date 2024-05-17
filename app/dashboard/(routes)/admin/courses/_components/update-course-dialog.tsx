@@ -31,6 +31,7 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
       currentBatch: data?.currentBatch?.toString(),
       regularPrice: data?.regularPrice?.toString(),
       duration: data?.duration?.toString(),
+      isActive: data?.isActive,
     },
   });
 

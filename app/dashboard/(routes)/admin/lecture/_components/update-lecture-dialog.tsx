@@ -30,13 +30,13 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
   const [batches, setBatches] = useState([]);
   const [modules, setModules] = useState([]);
   const [course, setCourse] = useState({
-    name: data?.course?.name,
-    _id: data?.course?._id,
+    name: data?.courseId?.name,
+    _id: data?.courseId?._id,
   });
 
   const [batch, setBatch] = useState({
     name: data?.batchId?.name,
-    _id: data?.batch?._id,
+    _id: data?.batchId?._id,
   });
   const [module, setModule] = useState({
     name: data?.moduleId?.moduleName,
@@ -49,7 +49,7 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
       lectureName: data?.lectureName,
       topic: data?.topic,
       type: data?.type,
-      isOptional: data?.isOptional,
+      isActive: data?.isActive,
       courseId: course?._id,
       batchId: batch?._id,
       moduleId: module._id,
@@ -154,7 +154,6 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
     );
   };
 
-  console.log("object", data);
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>

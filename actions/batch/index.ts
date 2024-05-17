@@ -1,6 +1,5 @@
 import { batchSchema, UpdateBatchSchema } from "@/schema/batchSchema";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import * as z from "zod";
 
 //add batch
@@ -105,22 +104,5 @@ export const HandelToUpdateBatch = async (
     }
   } catch (error) {
     setError("Batch updating failed");
-  }
-};
-
-//delete batch
-export const HandelToDeleteBatch = async (
-  id: string,
-  removeBatch: Function
-) => {
-  try {
-    const res = await removeBatch(id);
-    if (res.data.success) {
-      toast.success(res.data.message, { id: "removeBatch" });
-    } else if (!res.data.success) {
-      toast.error(res.data.message, { id: "removeBatch" });
-    }
-  } catch (error: any) {
-    toast.error(error.message, { id: "removeBatch" });
   }
 };
