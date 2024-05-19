@@ -140,7 +140,7 @@ const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Add Lecture`} />
+          <Title>Add Lecture</Title>
         </DialogTitle>
         <DialogDescription>
           Make a lecture here. Click submit when you&apos;re done.

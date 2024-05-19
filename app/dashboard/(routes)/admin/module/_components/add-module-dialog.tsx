@@ -26,7 +26,7 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
   const [error, setError] = useState<string | undefined>("");
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
-  const [course, setCourse] = useState({});
+  const [course, setCourse] = useState<any>({});
 
   const form = useForm<z.infer<typeof moduleSchema>>({
     resolver: zodResolver(moduleSchema),
@@ -86,7 +86,7 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Add Module`} />
+          <Title>Add Module</Title>
         </DialogTitle>
         <DialogDescription>
           make a module here. Click submit when you&apos;re done.

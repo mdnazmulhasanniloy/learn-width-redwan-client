@@ -29,6 +29,7 @@ type IBatchFormProps = {
   onSubmit: any;
   isLoading: boolean;
   courses: any;
+  handleDurationChange: Function;
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   setSearch: (
     value:
@@ -46,6 +47,7 @@ const BatchForm = ({
   isLoading,
   setSearch,
   courses,
+  handleDurationChange,
 }: IBatchFormProps) => {
   const { isSubmitting } = form.formState;
 
@@ -92,6 +94,7 @@ const BatchForm = ({
                     <Input
                       {...field}
                       type="number"
+                      onChange={(e) => handleDurationChange(e)}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Batch duration"
                       className={cn(

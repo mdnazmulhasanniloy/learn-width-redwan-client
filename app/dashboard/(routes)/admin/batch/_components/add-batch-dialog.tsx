@@ -75,11 +75,18 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
     );
   };
 
+  const handleDurationChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const duration = parseInt(event.target.value);
+    form.setValue("duration", duration);
+  };
+
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Add Batch`} />
+          <Title>Add Batch</Title>
         </DialogTitle>
         <DialogDescription>
           Make a batch here. Click submit when you&apos;re done.
@@ -95,6 +102,7 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
           isLoading={isLoading}
           setSearch={setSearch}
           courses={courses}
+          handleDurationChange={handleDurationChange}
         />
       </div>
     </DialogContent>

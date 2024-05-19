@@ -99,7 +99,7 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Update Module`} />
+          <Title>Update Module</Title>
         </DialogTitle>
         <DialogDescription>
           change module data here. Click submit when you&apos;re done.

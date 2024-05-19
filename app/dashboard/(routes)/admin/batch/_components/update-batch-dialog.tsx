@@ -70,6 +70,12 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
     return () => subscription.unsubscribe();
   });
 
+  const handleDurationChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const duration = parseInt(event.target.value);
+    form.setValue("duration", duration);
+  };
   const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
     const id = await data?._id;
     await HandelToUpdateBatch(
@@ -87,7 +93,7 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Update Batch`} />
+          <Title>Update Batch</Title>
         </DialogTitle>
         <DialogDescription>
           change batch data here. Click submit when you&apos;re done.
@@ -103,6 +109,7 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
           isLoading={isLoading}
           setSearch={setSearch}
           courses={courses}
+          handleDurationChange={handleDurationChange}
         />
       </div>
     </DialogContent>
