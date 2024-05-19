@@ -23,7 +23,6 @@ export const HandelToAddBatch = async (
 ) => {
   setSuccess("");
   setError("");
-  values.duration = parseInt(values.duration);
 
   try {
     const res: any = await addBatch(values);
@@ -77,8 +76,6 @@ export const HandelToUpdateBatch = async (
   setSuccess("");
   setError("");
   try {
-    values.duration = parseInt(values.duration);
-
     const res: any = await updateBatch({ id, data: values });
     const data: any = { ...res.data };
 

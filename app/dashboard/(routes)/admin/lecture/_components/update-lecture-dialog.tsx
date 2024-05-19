@@ -158,7 +158,7 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Update Lecture`} />
+          <Title>Update Lecture</Title>
         </DialogTitle>
         <DialogDescription>
           change Lecture data here. Click submit when you&apos;re done.

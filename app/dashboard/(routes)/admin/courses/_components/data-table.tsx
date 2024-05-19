@@ -44,7 +44,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">
         <header className="px-5 py-4 border-b border-gray-100">
           <div className="my-5">
-            <Title title={`Courses`} />
+            <Title>Course</Title>
           </div>
           <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input

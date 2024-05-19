@@ -66,7 +66,7 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>
-          <Title title={`Add Course`} />
+          <Title>Add Course</Title>
         </DialogTitle>
         <DialogDescription>
           Make a course here. Click submit when you&apos;re done.

@@ -7,8 +7,6 @@ import { formatPrice } from "@/lib/format";
 import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
-import { HandelToDeleteCourse } from "@/actions/course";
 import AddLectureDialog from "./add-lecture-dialog";
 import UpdateLectureDialog from "./update-lecture-dialog";
 import {
@@ -46,7 +44,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">
         <header className="px-5 py-4 border-b border-gray-100">
           <div className="my-5">
-            <Title title={`Lecture`} />
+            <Title>Lecture</Title>
           </div>
           <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input
