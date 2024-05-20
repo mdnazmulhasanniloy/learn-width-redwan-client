@@ -1,13 +1,39 @@
-"use client ";
+"use client";
+import React from "react";
 import working from "@/assets/homeImage/working.png";
 import { HoverButton } from "@/components/ui/hover-button";
 import Image from "next/image";
-import React from "react";
+import { motion } from "framer-motion";
 
 const HomeExplore = () => {
+  const variants = {
+    initial: {
+      y: 20,
+      opacity: 0,
+    },
+    animate: {
+      y: 0,
+      x: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        staggerChildren: 0.1,
+      },
+    },
+  };
   return (
-    <section className="my-10 w-11/12 mx-auto flex flex-col md:flex-row border border-gray-200 rounded-md overflow-hidden shadow-md items-center justify-center">
-      <div className="w-full md:w-[30%]">
+    <motion.section
+      variants={variants}
+      initial="initial"
+      whileInView="animate"
+      className="my-10 w-11/12 mx-auto flex flex-col md:flex-row border border-gray-200 rounded-md overflow-hidden shadow-md items-center justify-center"
+    >
+      <motion.div
+        variants={variants}
+        initial={{ x: 20, opacity: 0 }}
+        whileInView="animate"
+        className="w-full md:w-[30%]"
+      >
         <Image
           src={working}
           height={400}
@@ -17,9 +43,14 @@ const HomeExplore = () => {
           alt=""
           className="w-full object-cover"
         ></Image>
-      </div>
+      </motion.div>
 
-      <div className="w-full md:w-[70%] p-5 md:p-20 flex flex-col justify-between items-baseline">
+      <motion.div
+        variants={variants}
+        initial={{ x: -20, opacity: 0 }}
+        whileInView="animate"
+        className="w-full md:w-[70%] p-5 md:p-20 flex flex-col justify-between items-baseline"
+      >
         <h2 className="text-2xl md:text-3xl font-semibold md:text-center mt-5">
           Explore The E-Learning Institute
         </h2>
@@ -51,8 +82,8 @@ const HomeExplore = () => {
         <div className="mt-10">
           <HoverButton>Read More</HoverButton>
         </div>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 };
 
