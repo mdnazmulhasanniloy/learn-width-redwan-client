@@ -1,48 +1,9 @@
 "use client";
-import Title from "@/components/ui/title";
 import React from "react";
-
-import Image from "next/image";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import Slider from "react-slick";
 import { successStudent } from "./constants";
 import SuccessfulStudentsCard from "./successful-students-card";
-
-// const NextArrow = (props: any) => {
-//   const { onClick } = props;
-//   return (
-//     <div className="control-btn" onClick={onClick}>
-//       <button
-//         className="absolute top-2/4  -right-2 z-30 w-10 h-10
-//                   bg-transparent hover:bg-sky-400
-//                   text-sky-400 hover:text-white
-//                   border-2 border-sky-400 rounded-full
-//                   flex justify-center items-center
-//                   transition-all duration-300"
-//       >
-//         <ArrowRight />
-//       </button>
-//     </div>
-//   );
-// };
-
-// const PrevArrow = (props: any) => {
-//   const { onClick } = props;
-//   return (
-//     <div className="control-btn" onClick={onClick}>
-//       <button
-//         className="absolute top-2/4 -left-5 z-30 w-10 h-10
-//                  bg-transparent hover:bg-sky-400
-//                   text-sky-400 hover:text-white
-//                   border-2 border-sky-400 rounded-full
-//                    flex justify-center items-center
-//                    transition-all duration-300"
-//       >
-//         <ArrowLeft />
-//       </button>
-//     </div>
-//   );
-// };
+import { motion } from "framer-motion";
 
 const SuccessfulStudents = () => {
   const settings = {
@@ -75,9 +36,30 @@ const SuccessfulStudents = () => {
     ],
   };
 
+  const variants = {
+    initial: {
+      y: 20,
+      opacity: 0,
+    },
+    animate: {
+      y: 0,
+      x: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
   return (
     <section className="w-11/12 mx-auto my-20">
-      <div className="w-screen">
+      <motion.div
+        variants={variants}
+        initial={{ y: -20, opacity: 0 }}
+        whileInView="animate"
+        className="w-screen"
+      >
         <h2 className="sm:text-lg md:text-4xl font-semibold text-start">
           Meet Our Successful Students
         </h2>
@@ -86,15 +68,20 @@ const SuccessfulStudents = () => {
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="w-11/12 mx-auto my-20">
+      <motion.div
+        variants={variants}
+        initial="initial"
+        whileInView="animate"
+        className="w-11/12 mx-auto my-20"
+      >
         <Slider {...settings}>
           {successStudent?.map((student, i) => (
             <SuccessfulStudentsCard key={i} student={student} />
           ))}
         </Slider>
-      </div>
+      </motion.div>
     </section>
   );
 };

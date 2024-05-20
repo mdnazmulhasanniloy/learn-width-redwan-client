@@ -21,13 +21,12 @@ const HomeCoursesCard = ({
       whileInView="animate"
       className="w-full flex flex-col md:flex-row overflow-hidden border border-gra rounded-md shadow-lg hover:cursor-pointer hover:shadow-xl"
     >
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={course?.thumbnail}
-        height={400}
-        width={0}
+        alt={course?.name}
         loading="lazy"
         decoding="async"
-        alt=""
         className="w-full md:w-[40%] h-full object-cover"
       />
 
