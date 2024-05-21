@@ -1,7 +1,5 @@
-// import { useEffect, useState } from "react";
+import Footer from "@/components/footer";
 import Navbar from "./_components/navbar";
-import NevItem from "./_components/nev-item";
-import { HashLoader } from "react-spinners";
 
 const HomePageLayout = async ({ children }: { children: React.ReactNode }) => {
   // const [loading, setLoading] = useState(true);
@@ -25,7 +23,8 @@ const HomePageLayout = async ({ children }: { children: React.ReactNode }) => {
       <div className="h-[80px] fixed inset-y-0 w-full z-50">
         <Navbar />
       </div>
-      <main className="mt-[80px]">{children}</main>
+      <main className="mt-[80px] min-h-[100vh]">{children}</main>
+      <Footer />
     </div>
   );
 };
