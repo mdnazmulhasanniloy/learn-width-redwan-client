@@ -4,17 +4,17 @@ import student3 from "@/assets/homeImage/student-3.png";
 import student4 from "@/assets/homeImage/student-4.png";
 
 export type ICourse = {
-  createdAt: string;
-  currentBatch: number;
-  duration: number;
+  _id: string;
   id: string;
-  isActive: boolean;
   name: string;
+  duration: number;
   regularPrice: number;
   thumbnail: string;
-  updatedAt: string;
-  _id: string;
+  currentBatch: number;
   description: string;
+  isActive: boolean;
+  updatedAt: string;
+  createdAt: string;
 };
 
 export const successStudent = [
