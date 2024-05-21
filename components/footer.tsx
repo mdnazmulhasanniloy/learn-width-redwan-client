@@ -191,23 +191,28 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <motion.div
-        variants={variants}
-        initial="initial"
-        whileInView="animate"
-        className="bg-sky-400 py-4 text-gray-100"
-      >
+      <div className="bg-sky-400 py-4 text-gray-100">
         <div className="container mx-auto px-4">
           <div className="-mx-4 flex flex-wrap justify-between">
-            <div className="px-4 w-full text-center sm:w-auto sm:text-left">
+            <motion.div
+              variants={variants}
+              initial={{ x: 20, opacity: 0 }}
+              whileInView="animate"
+              className="px-4 w-full text-center sm:w-auto sm:text-left"
+            >
               Copyright © 2024 MD Nazmul Hasan
-            </div>
-            <div className="px-4 w-full text-center sm:w-auto sm:text-left">
+            </motion.div>
+            <motion.div
+              variants={variants}
+              initial={{ x: -20, opacity: 0 }}
+              whileInView="animate"
+              className="px-4 w-full text-center sm:w-auto sm:text-left"
+            >
               Made with ❤️ by IT-Somadan.
-            </div>
+            </motion.div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </footer>
   );
 };

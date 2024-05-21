@@ -5,8 +5,8 @@ const coursesApi = apiSlice?.injectEndpoints({
   endpoints: (builder) => ({
     // get categories
     getCourse: builder.query({
-      query: ({ meta, search }) =>
-        `/course?searchTerm=${search}&limit=${meta.limit}&page=${meta?.page}&total=${meta?.total}`,
+      query: ({ meta, search, sortBy = "", sortOrder = "asc" }) =>
+        `/course?searchTerm=${search}&limit=${meta.limit}&page=${meta?.page}&total=${meta?.total}&sortBy=${sortBy}&sortOrder=${sortOrder}`,
       providesTags: ["course"],
     }),
 

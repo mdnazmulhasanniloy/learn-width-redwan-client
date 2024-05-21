@@ -76,6 +76,7 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
     const duration = parseInt(event.target.value);
     form.setValue("duration", duration);
   };
+  
   const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
     const id = await data?._id;
     await HandelToUpdateBatch(

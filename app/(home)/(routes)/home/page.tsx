@@ -1,12 +1,13 @@
+import React from "react";
 import Banner from "./_components/banner";
-import FAQ from "./_components/faq";
 import HomePageCourses from "./_components/home_courses";
 import HomeExplore from "./_components/home_explore";
 import HomeJoinCard from "./_components/home_join_card";
-import StudentReview from "./_components/student-review";
 import SuccessfulStudents from "./_components/successful-students";
+import StudentReview from "./_components/student-review";
+import FAQ from "./_components/faq";
 
-export default function Home() {
+const HomePage = () => {
   return (
     <main>
       <Banner />
@@ -18,4 +19,6 @@ export default function Home() {
       <FAQ />
     </main>
   );
-}
+};
+
+export default HomePage;

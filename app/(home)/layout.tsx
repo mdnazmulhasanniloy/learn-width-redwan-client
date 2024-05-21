@@ -23,7 +23,7 @@ const HomePageLayout = async ({ children }: { children: React.ReactNode }) => {
       <div className="h-[80px] fixed inset-y-0 w-full z-50">
         <Navbar />
       </div>
-      <main className="mt-[80px] min-h-[100vh]">{children}</main>
+      <main className="mt-[80px]">{children}</main>
       <Footer />
     </div>
   );
