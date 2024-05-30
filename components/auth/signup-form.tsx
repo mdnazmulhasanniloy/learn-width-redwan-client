@@ -140,6 +140,9 @@ const SignUpForm = () => {
       backButtonLabel="Have an account?"
       backButtonLink="/sign-in"
       showSocial
+      setLoading={setLoading}
+      setSuccess={setSuccess}
+      setError={setError}
     >
       <>
         <FormError message={error} />

@@ -18,6 +18,19 @@ interface ICardWrapperProps {
   backButtonLabel: string;
   backButtonLink: string;
   showSocial?: boolean;
+  setSuccess: (
+    value:
+      | string
+      | undefined
+      | ((prev: string | undefined) => string | undefined)
+  ) => void;
+  setError: (
+    value:
+      | string
+      | undefined
+      | ((prev: string | undefined) => string | undefined)
+  ) => void;
+  setLoading: (value: boolean | ((prev: boolean) => boolean)) => void;
 }
 const CardWrapper = ({
   children,
@@ -25,6 +38,9 @@ const CardWrapper = ({
   backButtonLabel,
   backButtonLink,
   showSocial,
+  setLoading,
+  setSuccess,
+  setError,
 }: ICardWrapperProps) => {
   return (
     <Card className="w-[400px] shadow-md">
@@ -34,7 +50,11 @@ const CardWrapper = ({
       <CardContent>{children}</CardContent>
       {showSocial && (
         <CardFooter>
-          <Social />
+          <Social
+            setLoading={setLoading}
+            setSuccess={setSuccess}
+            setError={setError}
+          />
         </CardFooter>
       )}
       <CardFooter>
