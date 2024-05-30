@@ -50,8 +50,7 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
     values = {
       ...values,
       thumbnail: thumbnail,
-    };
-    // console.log(updatedValues.thumbnail);
+    }; 
     await HandelToAddCourse(
       addCourse,
       values,

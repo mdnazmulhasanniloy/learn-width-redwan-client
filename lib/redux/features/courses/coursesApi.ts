@@ -15,6 +15,7 @@ const coursesApi = apiSlice?.injectEndpoints({
       query: (data) => ({
         url: "/course/create-course",
         method: "POST",
+        credentials: "include",
         body: data,
       }),
       invalidatesTags: ["course"],

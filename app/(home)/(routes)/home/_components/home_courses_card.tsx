@@ -13,7 +13,6 @@ const HomeCoursesCard = ({
   course: ICourse;
   variants: any;
 }) => {
-  console.log(course);
   return (
     <motion.div
       variants={variants}

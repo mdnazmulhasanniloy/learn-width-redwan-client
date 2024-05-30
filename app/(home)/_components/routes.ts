@@ -1,4 +1,4 @@
-import { Compass, HomeIcon, Layout, LogIn } from "lucide-react";
+import { Compass, HomeIcon, Laptop, Layout, LogIn } from "lucide-react";
 
 export const DefaultRoutes = [
   {
@@ -7,23 +7,18 @@ export const DefaultRoutes = [
     icon: HomeIcon,
   },
   {
-    href: "/about",
-    label: "About",
-    icon: Layout,
-  },
-  {
     href: "/courses",
     label: "courses",
     icon: Compass,
   },
   {
+    href: "/about",
+    label: "About",
+    icon: Laptop,
+  },
+  {
     href: "/dashboard",
     label: "Dashboard",
     icon: Layout,
-  },
-  {
-    href: "/sign-in",
-    label: "Login",
-    icon: LogIn,
   },
 ];

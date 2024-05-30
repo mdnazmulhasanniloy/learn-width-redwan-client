@@ -136,7 +136,6 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
   };
 
   const onSubmit = async (values: z.infer<typeof updateLectureSchema>) => {
-    console.log(values);
     const id = await data?._id;
     values = {
       ...values,

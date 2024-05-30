@@ -22,11 +22,26 @@ import {
 import FormSuccess from "../form-success";
 import { Loader2 } from "lucide-react";
 import { LoginSchema } from "@/schema/authSchema";
+import {
+  useSendEmailVerification,
+  useSignInWithEmailAndPassword,
+  useSignOut,
+} from "react-firebase-hooks/auth";
+import { useUerLoginMutation } from "@/lib/redux/features/user/userSlice";
+import auth from "@/firebase/firebase.auth";
+import { useRouter } from "next/navigation";
 
 const SignInForm = () => {
-  const [isPending, StartTransition] = useTransition();
+  const [signInFn, { isLoading }] = useUerLoginMutation();
+  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
+  const [signInWithEmailAndPassword, user, loginLoading, signInError] =
+    useSignInWithEmailAndPassword(auth);
+  const [sendEmailVerification, sending, verifyEmailError] =
+    useSendEmailVerification(auth);
+  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
+
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -37,16 +52,50 @@ const SignInForm = () => {
 
   const [isShow, setIsShow] = useState(false);
   const { isSubmitting, isValid, errors } = form?.formState;
+  const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-    //  setError("");
-    //  setSuccess("");
-    //  StartTransition(() => {
-    //    login(values).then((data) => {
-    //      setError(data?.error);
-    //      setSuccess(data?.success);
-    //    });
-    //  });
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        values.email,
+        values.password
+      );
+      if (!userCredential?.user?.emailVerified) {
+        await sendEmailVerification();
+        await signOut();
+        setLoading(false);
+        return setError(
+          "This Email is not verified, please check your mail box"
+        );
+      }
+
+      const res: any = await signInFn(values);
+      const data: any = { ...res.data };
+      if (data?.success) {
+        setSuccess(data?.message);
+        setLoading(false);
+        form.reset();
+        router.push("/");
+      } else {
+        let errorMessage = data?.message || "An error occurred";
+        // Check if there are individual error messages
+        if (data?.errorMessages) {
+          // Format the individual error message
+          const individualErrorMessage = data?.errorMessages?.map(
+            (error: { path: string; message: string }) =>
+              `${error.path}: ${error.message} \n`
+          );
+          errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
+        }
+        setError(errorMessage);
+        setLoading(false);
+      }
+    } catch (err: any) {
+      throw setError(err?.message);
+    }
   };
 
   return (
@@ -70,7 +119,7 @@ const SignInForm = () => {
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled={loading}
                       placeholder="jon@example.com"
                       className={cn(
                         "p-3 border rounded-lg",
@@ -92,7 +141,7 @@ const SignInForm = () => {
                     <Input
                       type={isShow ? "text" : "password"}
                       {...field}
-                      disabled={isPending}
+                      disabled={loading}
                       placeholder="******"
                       className={cn(
                         "p-3 border rounded-lg",
@@ -115,11 +164,11 @@ const SignInForm = () => {
               type="submit"
               className={cn(
                 "w-full border border-sky-400 bg-sky-400 hover:text-sky-400 hover:bg-transparent",
-                (!isValid || isSubmitting || isPending) && "cursor-not-allowed"
+                (!isValid || isSubmitting || loading) && "cursor-not-allowed"
               )}
-              disabled={(!isValid && isSubmitting) || isPending}
+              disabled={(!isValid && isSubmitting) || loading}
             >
-              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign in
             </Button>
           </form>

@@ -4,8 +4,16 @@ import Link from "next/link";
 import Img404 from "@/assets/404page/404-2.png";
 import group from "@/assets/404page/Group.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function NotFound() {
+  const router = useRouter();
+  useEffect(() => {
+    setTimeout(() => {
+      router.push("/sign-in");
+    }, 8000);
+  }, [router]);
   return (
     <div className="lg:px-24 lg:py-24 md:py-20 md:px-44 px-4 py-24 items-center flex justify-center flex-col-reverse lg:flex-row md:gap-28 gap-16">
       <div className="xl:pt-24 w-full xl:w-1/2 relative pb-12 lg:pb-0">

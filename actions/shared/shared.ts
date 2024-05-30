@@ -9,7 +9,6 @@ export const handelToActive = async (
   try {
     const data = { isActive: value };
     const res = await updateItem({ id, data: data });
-    console.log(res);
     if (res.data.success) {
       toast.success(res.data.message, { id: "updateItem" });
     } else if (!res.data.success) {

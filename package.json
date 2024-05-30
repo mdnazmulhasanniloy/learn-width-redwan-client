@@ -29,6 +29,7 @@
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
+    "react-firebase-hooks": "^5.1.1",
     "react-hook-form": "^7.51.3",
     "react-redux": "^9.1.1",
     "slick-carousel": "^1.8.1",
@@ -37,6 +38,7 @@
     "zod": "^3.23.4"
   },
   "devDependencies": {
+    "@types/firebase": "^3.2.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -45,6 +47,7 @@
     "axios": "^1.6.8",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "firebase": "^10.12.1",
     "framer-motion": "^11.2.4",
     "fs": "^0.0.1-security",
     "moment": "^2.30.1",

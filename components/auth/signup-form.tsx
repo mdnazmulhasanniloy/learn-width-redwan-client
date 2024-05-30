@@ -1,7 +1,7 @@
 "use client";
 
 import { RegisterSchema } from "@/schema/authSchema";
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,12 +21,33 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import auth from "@/firebase/firebase.auth";
+import {
+  useCreateUserWithEmailAndPassword,
+  useSendEmailVerification,
+  useSignOut,
+  useUpdateProfile,
+} from "react-firebase-hooks/auth";
+import { useUerRegisterMutation } from "@/lib/redux/features/user/userSlice";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
+  const [registerFn, { isLoading }] = useUerRegisterMutation();
   const [isShow, setIsShow] = useState(false);
-  const [isPending, StartTransition] = useTransition();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
+  const [
+    createUserWithEmailAndPassword,
+    user,
+    createUserLoading,
+    createUserError,
+  ] = useCreateUserWithEmailAndPassword(auth);
+  const [updateProfile, updating, updateUserError] = useUpdateProfile(auth);
+  const [sendEmailVerification, sending, verifyEmailError] =
+    useSendEmailVerification(auth);
+  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
@@ -37,17 +58,82 @@ const SignUpForm = () => {
   });
 
   const { isSubmitting, isValid, errors } = form?.formState;
+  useEffect(() => {
+    if (createUserError) {
+      setError(createUserError.message);
+      setLoading(false);
+    }
+    if (updateUserError) {
+      setError(updateUserError.message);
+      setLoading(false);
+    }
+    if (verifyEmailError) {
+      setError(verifyEmailError.message);
+      setLoading(false);
+    }
 
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    //    setError("");
-    //    setSuccess("");
-    //    StartTransition(() => {
-    //      register(values).then((data) => {
-    //        setError(data?.error);
-    //        setSuccess(data?.success);
-    //      });
-    //    });
+    if (createUserLoading || updating || sending || isLoading) setLoading(true);
+  }, [
+    createUserError,
+    updateUserError,
+    verifyEmailError,
+    createUserLoading,
+    updating,
+    sending,
+    isLoading,
+  ]);
+
+  const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
+    setLoading(true);
+    setSuccess("");
+    setError("");
+    try {
+      const user = await createUserWithEmailAndPassword(
+        values?.email,
+        values?.password
+      );
+
+      if (user?.user?.email) {
+        const userUpdate = await updateProfile({ displayName: values?.name });
+        if (userUpdate) {
+          const register: any = await registerFn(values);
+
+          const data: any = { ...register.data };
+
+          if (data?.success) {
+            const success = await sendEmailVerification();
+
+            if (success) {
+              setSuccess("Please check your email to verify");
+              setLoading(false);
+              form.reset();
+              setTimeout(async () => {
+                await signOut();
+                router.push("/sign-in");
+              }, 5000);
+            }
+          } else {
+            let errorMessage = data?.message || "An error occurred";
+            // Check if there are individual error messages
+            if (data?.errorMessages) {
+              // Format the individual error message
+              const individualErrorMessage = data?.errorMessages?.map(
+                (error: { path: string; message: string }) =>
+                  `${error.path}: ${error.message} \n`
+              );
+              errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
+            }
+            setError(errorMessage);
+            setLoading(false);
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error(error);
+      setError(error.message);
+    }
   };
+
   return (
     <CardWrapper
       headerLabel="Welcome to sign up page"
@@ -69,7 +155,7 @@ const SignUpForm = () => {
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled={loading}
                       placeholder="Mr Jondo"
                       className={cn(
                         "p-3 border rounded-lg",
@@ -91,7 +177,7 @@ const SignUpForm = () => {
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={isPending}
+                      disabled={loading}
                       placeholder="jon@example.com"
                       className={cn(
                         "p-3 border rounded-lg",
@@ -113,7 +199,7 @@ const SignUpForm = () => {
                     <Input
                       type={isShow ? "text" : "password"}
                       {...field}
-                      disabled={isPending}
+                      disabled={loading}
                       placeholder="******"
                       className={cn(
                         "p-3 border rounded-lg",
@@ -136,7 +222,7 @@ const SignUpForm = () => {
               type="submit"
               className={cn(
                 "w-full border border-sky-400 bg-sky-400 hover:text-sky-400 hover:bg-transparent",
-                (!isValid || isSubmitting || isPending) && "cursor-not-allowed"
+                (!isValid || isSubmitting || loading) && "cursor-not-allowed"
               )}
               disabled={!isValid && isSubmitting}
             >

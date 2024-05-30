@@ -17,8 +17,6 @@ const ModulePage = () => {
     return <Loader />;
   }
 
-  console.log("object", data);
-
   return (
     <div className="p-6">
       <DataTable

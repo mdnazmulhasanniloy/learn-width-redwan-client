@@ -56,7 +56,6 @@ const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
       if (name === "courseId") {
-        console.log("object");
         courses?.forEach((each: { _id: string; name: string }) => {
           if (each?._id === value?.courseId) {
             setCourse({
