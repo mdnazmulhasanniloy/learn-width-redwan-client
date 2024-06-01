@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import apiSlice from "./features/api/apiSlice";
-import logger from "redux-logger";
+//import logger from "redux-logger";
 
 const store = configureStore({
   reducer: {
@@ -8,7 +8,7 @@ const store = configureStore({
   },
 
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware, logger),
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
