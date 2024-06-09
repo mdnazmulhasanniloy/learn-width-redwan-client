@@ -6,8 +6,8 @@ import { ICourse } from "../../home/_components/constants";
 import { CalendarCheck, Users } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 import { HoverButton } from "@/components/ui/hover-button";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const CourseCard = ({ course }: { course: ICourse }) => {
   const [SkeletonItems, setSkeleton] = useState(true);
@@ -117,8 +117,8 @@ const CourseCard = ({ course }: { course: ICourse }) => {
             {SkeletonItems ? (
               <Skeleton width="150px" height="30px" />
             ) : (
-              <Link href={`/course/${course?._id}`}>
-                <HoverButton>Show Description</HoverButton>
+              <Link href={`courses/checkout/${course?._id}`}>
+                <HoverButton>Enroll now</HoverButton>
               </Link>
             )}
           </div>

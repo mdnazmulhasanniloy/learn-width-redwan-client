@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // images: {
+  //   domains: ["learnwidthredwan-storage.s3.eu-north-1.amazonaws.com"], // Replace with your S3 bucket domain
+  // },
+
   images: {
     remotePatterns: [
       {

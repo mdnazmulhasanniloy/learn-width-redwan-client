@@ -22,15 +22,11 @@ const SidebarRoutes = () => {
     const data: any = await { ...res.data };
     if (data?.success) {
       const sign_out = await signOut();
-      //
-      // console.log(data);
-      // // return;
       if (!sign_out) return toast.error("sign out failed", { id: "sign_out" });
       router.push("/");
       toast.success(data?.message, { id: "sign_out" });
     } else {
       let errorMessage = data?.message || "An error occurred";
-      // Check if there are individual error messages
       if (data?.errorMessages) {
         // Format the individual error message
         const individualErrorMessage = data?.errorMessages?.map(
