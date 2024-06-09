@@ -11,8 +11,6 @@ import {
 } from "lucide-react";
 import SidebarItem from "./sidebar-item";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
-import { FaIdCard } from "react-icons/fa";
 const guestRoutes = [
   {
     icon: Layout,

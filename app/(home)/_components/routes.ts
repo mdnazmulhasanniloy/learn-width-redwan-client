@@ -17,7 +17,7 @@ export const DefaultRoutes = [
     icon: Laptop,
   },
   {
-    href: "/dashboard",
+    href: "/dashboard/admin/courses",
     label: "Dashboard",
     icon: Layout,
   },

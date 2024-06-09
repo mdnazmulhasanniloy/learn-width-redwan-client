@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+// import { usePathname, useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
@@ -8,12 +8,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { SignOut } from "@/actions/login";
 
 const NavbarRoutes = ({ session }: any) => {
-  const router = useRouter();
+  // const router = useRouter();
   const user = session?.user;
-  const pathname = usePathname();
-  const isAdminPage = pathname?.startsWith("/teacher");
-  const isCoursePage = pathname?.includes("/courses");
-  const isSearchPage = pathname === "/search";
+  // const pathname = usePathname();
+  // const isAdminPage = pathname?.startsWith("/teacher");
+  // const isCoursePage = pathname?.includes("/courses");
+  // const isSearchPage = pathname === "/search";
 
   return (
     <div className="flex gap-x2 ml-auto">
