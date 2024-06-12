@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/format";
 import { HoverButton } from "@/components/ui/hover-button";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 const CourseCard = ({ course }: { course: ICourse }) => {
   const [SkeletonItems, setSkeleton] = useState(true);
@@ -35,96 +36,180 @@ const CourseCard = ({ course }: { course: ICourse }) => {
   };
 
   return (
-    <motion.div
-      variants={variants}
-      initial="initial"
-      whileInView="animate"
-      className="p-5 border border-gray-200 rounded-md"
-    >
-      <div className="">
-        <figure>
-          {SkeletonItems ? (
-            <Skeleton width="100%" height="200px" />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+    <div className="border-2  rounded-2xl overflow-hidden">
+      <figure>
+        {SkeletonItems ? (
+          <Skeleton width="100%" height="200px" />
+        ) : (
+          <div className="relative w-full h-80">
+            <Image
               src={course?.thumbnail}
-              height={400}
-              width={0}
-              loading="lazy"
-              decoding="async"
               alt={course?.name}
-              className="w-full object-cover"
+              layout="fill"
+              loading="lazy"
+              unoptimized
+              className="object-cover fill-transparent"
             />
-          )}
-        </figure>
-        <div className="mt-5">
+          </div>
+        )}
+      </figure>
+      <div className="p-5 ">
+        {SkeletonItems ? (
+          <>
+            <Skeleton width="200px" height="20px" />
+          </>
+        ) : (
+          <h2 className="text-2xl font-semibold">{course?.name}</h2>
+        )}
+
+        <p className="my-3 text-md">
           {SkeletonItems ? (
             <>
-              <Skeleton width="200px" height="20px" />
+              <Skeleton width="full" height="20px" />
+              <Skeleton width="full" height="20px" />
+              <Skeleton width="80px" height="20px" />
             </>
           ) : (
-            <h2 className="text-2xl font-semibold">{course?.name}</h2>
+            <>
+              {"Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsum cumnatus accusantium. Neque veritatis voluptates eum est obcaecatidolores saepe officia facilis labore ad, nisi maiores placeat laudantium libero asperiores.".slice(
+                0,
+                140
+              )}
+              ...
+            </>
           )}
+        </p>
+        <div className="mt-5">
+          {SkeletonItems ? (
+            <Skeleton width="150px" height="15px" />
+          ) : (
+            <h3 className="text-lg flex items-center gap-3">
+              <strong className="font-bold text-sky-400">Price:</strong>{" "}
+              {formatPrice(course?.regularPrice)}
+            </h3>
+          )}
+        </div>
 
-          <p className="my-5 text-md">
-            {SkeletonItems ? (
-              <>
-                <Skeleton width="full" height="20px" />
-                <Skeleton width="full" height="20px" />
-                <Skeleton width="80px" height="20px" />
-              </>
-            ) : (
-              <>
-                {"Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsum cumnatus accusantium. Neque veritatis voluptates eum est obcaecatidolores saepe officia facilis labore ad, nisi maiores placeat laudantium libero asperiores.".slice(
-                  0,
-                  140
-                )}
-                ...
-              </>
-            )}
-          </p>
-          <div className="mt-5">
-            {SkeletonItems ? (
-              <Skeleton width="150px" height="15px" />
-            ) : (
-              <h3 className="text-lg flex items-center gap-3">
-                <strong className="font-bold text-sky-400">Price:</strong>{" "}
-                {formatPrice(course?.regularPrice)}
-              </h3>
-            )}
-          </div>
+        <div className="flex justify-between items-center my-5">
+          {SkeletonItems ? (
+            <Skeleton width="50px" height="15px" />
+          ) : (
+            <div className="flex items-center gap-2">
+              <Users className="text-sky-400" /> 120
+            </div>
+          )}
+          {SkeletonItems ? (
+            <Skeleton width="80px" height="15px" />
+          ) : (
+            <p className="flex items-center gap-2 ">
+              <CalendarCheck className="text-sky-400" /> {course?.duration}{" "}
+              Months
+            </p>
+          )}
+        </div>
 
-          <div className="flex justify-between items-center my-5">
-            {SkeletonItems ? (
-              <Skeleton width="50px" height="15px" />
-            ) : (
-              <div className="flex items-center gap-2">
-                <Users className="text-sky-400" /> 120
-              </div>
-            )}
-            {SkeletonItems ? (
-              <Skeleton width="80px" height="15px" />
-            ) : (
-              <p className="flex items-center gap-2 ">
-                <CalendarCheck className="text-sky-400" /> {course?.duration}{" "}
-                Months
-              </p>
-            )}
-          </div>
-
-          <div className="flex justify-end mt-10">
-            {SkeletonItems ? (
-              <Skeleton width="150px" height="30px" />
-            ) : (
-              <Link href={`courses/checkout/${course?._id}`}>
-                <HoverButton>Enroll now</HoverButton>
-              </Link>
-            )}
-          </div>
+        <div className="flex justify-end mt-10">
+          {SkeletonItems ? (
+            <Skeleton width="150px" height="30px" />
+          ) : (
+            <Link href={`courses/checkout/${course?._id}`}>
+              <HoverButton>Enroll now</HoverButton>
+            </Link>
+          )}
         </div>
       </div>
-    </motion.div>
+    </div>
+
+    // <motion.div
+    //   variants={variants}
+    //   initial="initial"
+    //   whileInView="animate"
+    //   className="p-5 border border-gray-200 rounded-md"
+    // >
+    //   <div className="">
+    //     <figure>
+    //       {SkeletonItems ? (
+    //         <Skeleton width="100%" height="200px" />
+    //       ) : (
+    //         // eslint-disable-next-line @next/next/no-img-element
+    //         <img
+    //           src={course?.thumbnail}
+    //           height={400}
+    //           width={0}
+    //           loading="lazy"
+    //           decoding="async"
+    //           alt={course?.name}
+    //           className="w-full object-cover"
+    //         />
+    //       )}
+    //     </figure>
+    //     <div className="mt-5">
+    //       {SkeletonItems ? (
+    //         <>
+    //           <Skeleton width="200px" height="20px" />
+    //         </>
+    //       ) : (
+    //         <h2 className="text-2xl font-semibold">{course?.name}</h2>
+    //       )}
+
+    //       <p className="my-5 text-md">
+    //         {SkeletonItems ? (
+    //           <>
+    //             <Skeleton width="full" height="20px" />
+    //             <Skeleton width="full" height="20px" />
+    //             <Skeleton width="80px" height="20px" />
+    //           </>
+    //         ) : (
+    //           <>
+    //             {"Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsum cumnatus accusantium. Neque veritatis voluptates eum est obcaecatidolores saepe officia facilis labore ad, nisi maiores placeat laudantium libero asperiores.".slice(
+    //               0,
+    //               140
+    //             )}
+    //             ...
+    //           </>
+    //         )}
+    //       </p>
+    //       <div className="mt-5">
+    //         {SkeletonItems ? (
+    //           <Skeleton width="150px" height="15px" />
+    //         ) : (
+    //           <h3 className="text-lg flex items-center gap-3">
+    //             <strong className="font-bold text-sky-400">Price:</strong>{" "}
+    //             {formatPrice(course?.regularPrice)}
+    //           </h3>
+    //         )}
+    //       </div>
+
+    //       <div className="flex justify-between items-center my-5">
+    //         {SkeletonItems ? (
+    //           <Skeleton width="50px" height="15px" />
+    //         ) : (
+    //           <div className="flex items-center gap-2">
+    //             <Users className="text-sky-400" /> 120
+    //           </div>
+    //         )}
+    //         {SkeletonItems ? (
+    //           <Skeleton width="80px" height="15px" />
+    //         ) : (
+    //           <p className="flex items-center gap-2 ">
+    //             <CalendarCheck className="text-sky-400" /> {course?.duration}{" "}
+    //             Months
+    //           </p>
+    //         )}
+    //       </div>
+
+    //       <div className="flex justify-end mt-10">
+    //         {SkeletonItems ? (
+    //           <Skeleton width="150px" height="30px" />
+    //         ) : (
+    //           <Link href={`courses/checkout/${course?._id}`}>
+    //             <HoverButton>Enroll now</HoverButton>
+    //           </Link>
+    //         )}
+    //       </div>
+    //     </div>
+    //   </div>
+    // </motion.div>
   );
 };
 

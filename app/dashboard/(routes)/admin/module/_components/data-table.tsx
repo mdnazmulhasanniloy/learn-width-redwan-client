@@ -198,11 +198,14 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
           </div>
         </div>
       </div>
-      <Dialog open={open}>
+      <Dialog onOpenChange={() => setOpen(!open)} open={open}>
         <AddModuleDialog setOpen={setOpen} />
       </Dialog>
       {moduleData && updateDialogIsOpen && (
-        <Dialog open={updateDialogIsOpen}>
+        <Dialog
+          onOpenChange={() => setUpdateDialogIsOpen(updateDialogIsOpen)}
+          open={updateDialogIsOpen}
+        >
           <UpdateModuleDialog
             setOpen={setUpdateDialogIsOpen}
             data={moduleData}

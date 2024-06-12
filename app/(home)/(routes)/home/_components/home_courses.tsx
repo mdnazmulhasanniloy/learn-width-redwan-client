@@ -68,7 +68,7 @@ const HomePageCourses = () => {
       </div>
 
       <motion.div
-        className="mt-5 grid sm:grid-cols-1 md:grid-cols-2 gap-5 w-11/12 mx-auto"
+        className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5 w-11/12 mx-auto"
         variants={variants}
       >
         {courses?.length > 0 &&

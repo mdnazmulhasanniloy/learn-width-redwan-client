@@ -39,12 +39,14 @@ export const handelToAddLecture = async (
 
     formData.append("video", values.video); // Use consistent key
 
+    const value = JSON.stringify(values);
+    formData.append("data", value);
     // Append other form data
-    Object.entries(values).forEach(([key, value]) => {
-      if (key !== "video") {
-        formData.append(key, value);
-      }
-    });
+    // Object.entries(values).forEach(([key, value]) => {
+    //   if (key !== "video") {
+    //     formData.append(key, value);
+    //   }
+    // });
 
     // values.video = formData;
 
@@ -110,12 +112,15 @@ export const handelToUpdateLecture = async (
       formData.append("video", values.video);
     }
 
+    const value = JSON.stringify(values);
+    formData.append("data", value);
+
     // Append other form data
-    await Object.entries(values).forEach(([key, value]) => {
-      if (key !== "video") {
-        formData.append(key, value);
-      }
-    });
+    // await Object.entries(values).forEach(([key, value]) => {
+    //   if (key !== "video") {
+    //     formData.append(key, value);
+    //   }
+    // });
 
     const res: any = await updateLecture({ id, data: formData });
     const data: any = res.data;

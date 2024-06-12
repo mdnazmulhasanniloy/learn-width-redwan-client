@@ -52,14 +52,16 @@ export const HandelToAddCourse = async (
     // const res: any = await addCourse({ ...values, form });
     const formData = new FormData();
 
-    formData.append("thumbnail", values.thumbnail); // Use consistent key
-
     // Append other form data
-    Object.entries(values).forEach(([key, value]) => {
-      if (key !== "thumbnail") {
-        formData.append(key, value);
-      }
-    });
+    const value = JSON.stringify(values);
+    formData.append("thumbnail", values.thumbnail); // Use consistent key
+    formData.append("data", value); // Use consistent key
+
+    // Object.entries(values).forEach(([key, value]) => {
+    //   if (key !== "thumbnail") {
+    //     formData.append(key, value);
+    //   }
+    // });
 
     const res: any = await addCourse(formData);
 
@@ -124,12 +126,14 @@ export const HandelToUpdateCourse = async (
       formData.append("thumbnail", values.thumbnail);
     }
 
+    const value = JSON.stringify(values);
+    formData.append("data", value);
     // Append other form data
-    await Object.entries(values).forEach(([key, value]) => {
-      if (key !== "thumbnail") {
-        formData.append(key, value);
-      }
-    });
+    // await Object.entries(values).forEach(([key, value]) => {
+    //   if (key !== "thumbnail") {
+    //     formData.append(key, value);
+    //   }
+    // });
 
     const res: any = await updateCourse({ id, data: formData });
     const data: any = res.data;
@@ -160,5 +164,3 @@ export const HandelToUpdateCourse = async (
     setError("Course updating failed");
   }
 };
-
- 

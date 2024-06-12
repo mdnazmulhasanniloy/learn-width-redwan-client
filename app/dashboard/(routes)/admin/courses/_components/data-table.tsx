@@ -203,11 +203,14 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
         </div>
       </div>
 
-      <Dialog open={open}>
+      <Dialog onOpenChange={() => setOpen(!open)} open={open}>
         <AddCourseDialog setOpen={setOpen} />
       </Dialog>
       {courseData && updateDialogIsOpen && (
-        <Dialog open={updateDialogIsOpen}>
+        <Dialog
+          onOpenChange={() => setUpdateDialogIsOpen(!updateDialogIsOpen)}
+          open={updateDialogIsOpen}
+        >
           <UpdateCourseDialog
             setOpen={setUpdateDialogIsOpen}
             data={courseData}

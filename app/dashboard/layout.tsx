@@ -2,6 +2,13 @@
 import Navbar from "./_components/navbar";
 import Sidebar from "./_components/sidebar";
 
+import { Metadata } from "next";
+import React from "react";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
+
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-full">

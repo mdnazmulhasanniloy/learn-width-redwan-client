@@ -103,7 +103,8 @@ const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
 
   //module search
   useEffect(() => {
-    setBatches([]);
+    console.log("batch");
+    // setBatches([]);
     fetch(`${serverUrl}module?batch=${batch?._id}`)
       .then((response) => response.json())
       .then((data) => {

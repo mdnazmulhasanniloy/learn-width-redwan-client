@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DialogContent,
   DialogDescription,
@@ -8,9 +10,9 @@ import Title from "@/components/ui/title";
 import { useAddCourseMutation } from "@/lib/redux/features/courses/coursesApi";
 import { coursesSchema } from "@/schema/courseSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { number, z } from "zod";
 import CourseForm from "./course-form";
 import { HandelToAddCourse } from "@/actions/course";
 
@@ -36,6 +38,20 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
     },
   });
 
+  const subscription = form.watch((value, { name, type }) => {
+    if (name === "duration" && value.duration !== undefined) {
+      form.setValue("duration", parseInt(String(value.duration), 10));
+      console.log(value.duration);
+    }
+    if (name === "regularPrice" && value.regularPrice !== undefined) {
+      form.setValue("regularPrice", parseInt(String(value.regularPrice), 10));
+      console.log(value.regularPrice);
+    }
+    if (name === "currentBatch" && value.currentBatch !== undefined) {
+      form.setValue("currentBatch", parseInt(String(value.currentBatch), 10));
+      console.log(value.currentBatch);
+    }
+  });
   const handleThumbnailChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -50,7 +66,7 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
     values = {
       ...values,
       thumbnail: thumbnail,
-    }; 
+    };
     await HandelToAddCourse(
       addCourse,
       values,

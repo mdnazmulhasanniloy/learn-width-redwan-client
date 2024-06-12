@@ -4,38 +4,16 @@ import Slider from "react-slick";
 import { successStudent } from "./constants";
 import SuccessfulStudentsCard from "./successful-students-card";
 import { motion } from "framer-motion";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
 
 const SuccessfulStudents = () => {
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    cssEase: "linear",
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    // nextArrow: <NextArrow />,
-    // prevArrow: <PrevArrow />,
-    responsive: [
-      {
-        breakpoint: 700,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-          initialSlide: 2,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
-
   const variants = {
     initial: {
       y: 20,
@@ -76,11 +54,27 @@ const SuccessfulStudents = () => {
         whileInView="animate"
         className="w-11/12 mx-auto my-20"
       >
-        <Slider {...settings}>
+        <Carousel
+          opts={{
+            align: "start",
+            dragFree: true,
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {successStudent.map((student, i) => (
+              <SuccessfulStudentsCard key={i} student={student} />
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+        {/* <Slider {...settings}>
           {successStudent?.map((student, i) => (
-            <SuccessfulStudentsCard key={i} student={student} />
+           
           ))}
-        </Slider>
+        </Slider> */}
       </motion.div>
     </section>
   );

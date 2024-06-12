@@ -1,4 +1,5 @@
 export const serverUrl = process.env.NEXT_PUBLIC_BASE_URL;
+//"http://localhost:2000/api/v1/";
 //
 export const db_url = process.env.DB_URL;
 

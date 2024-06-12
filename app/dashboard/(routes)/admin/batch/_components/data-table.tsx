@@ -214,11 +214,14 @@ const DataTable = ({
         </div>
       </div>
 
-      <Dialog open={open}>
+      <Dialog onOpenChange={() => setOpen(!open)} open={open}>
         <AddBatchDialog setOpen={setOpen} />
       </Dialog>
       {batchData && updateDialogIsOpen && (
-        <Dialog open={updateDialogIsOpen}>
+        <Dialog
+          onOpenChange={() => setUpdateDialogIsOpen(!updateDialogIsOpen)}
+          open={updateDialogIsOpen}
+        >
           <UpdateBatchDialog setOpen={setUpdateDialogIsOpen} data={batchData} />
         </Dialog>
       )}
