@@ -1,5 +1,5 @@
 "use client";
-import { useGetCourseQuery } from "@/lib/redux/features/courses/coursesApi";
+// import { useGetCourseQuery } from "@/lib/redux/features/courses/coursesApi";
 import React, { useEffect } from "react";
 import { ICourse } from "../home/_components/constants";
 import CardLoader from "./_components/card-loader";
@@ -19,22 +19,22 @@ const CoursePage = () => {
   const [sortBy, setSortBy] = React.useState<boolean>(false);
   const [courses, setCourses] = React.useState<ICourse[] | []>([]);
 
-  const { data, isLoading, isError, isSuccess } = useGetCourseQuery({
-    meta,
-    search,
-    sortBy: sortBy ? "regularPrice" : "createdAt",
-    sortOrder,
-  });
+  // const { data, isLoading, isError, isSuccess } = useGetCourseQuery({
+  //   meta,
+  //   search,
+  //   sortBy: sortBy ? "regularPrice" : "createdAt",
+  //   sortOrder,
+  // });
 
-  useEffect(() => {
-    if (isSuccess) {
-      data?.success && setCourses(data?.data);
-    }
-  }, [data, isSuccess]);
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     data?.success && setCourses(data?.data);
+  //   }
+  // }, [data, isSuccess]);
 
-  if (isLoading) {
-    return <CardLoader />;
-  }
+  // if (isLoading) {
+  //   return <CardLoader />;
+  // }
 
   return (
     <div className="w-11/12 mx-auto my-20">

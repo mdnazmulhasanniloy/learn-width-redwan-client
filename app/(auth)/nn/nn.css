@@ -1,0 +1,153 @@
+.materialContainer {
+  position: relative;
+  width: 360px;
+  height: auto;
+  margin: 10px auto;
+}
+
+.box {
+  position: relative;
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.1);
+}
+
+.box .title {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.input {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input label {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 14px;
+  color: #999;
+  transition: 0.5s;
+}
+
+.input input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: none;
+  border-bottom: 2px solid #eee;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  transition: 0.5s;
+}
+
+.input input:focus {
+  border-bottom: 2px solid #007bff;
+}
+
+.input .spin {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #007bff;
+  transition: 0.5s;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+}
+
+.button button {
+  background: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.button button:hover {
+  background: #0056b3;
+}
+
+.pass-forgot {
+  display: block;
+  text-align: center;
+  color: #007bff;
+  margin-top: 20px;
+}
+
+.overbox {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: 0.5s;
+}
+
+.materialContainer.registering .overbox {
+  display: block;
+}
+
+.overbox .material-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.overbox .material-button.active {
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  transform: rotate(45deg);
+}
+
+.overbox .title {
+  display: none;
+  font-size: 20px;
+  color: #fff;
+  text-align: center;
+  margin-top: 100px;
+  text-transform: uppercase;
+}
+
+.overbox.active .title {
+  display: block;
+}
+
+.overbox .input {
+  display: none;
+}
+
+.overbox.active .input {
+  display: block;
+}
+
+.overbox .button {
+  display: none;
+}
+
+.overbox.active .button {
+  display: block;
+}

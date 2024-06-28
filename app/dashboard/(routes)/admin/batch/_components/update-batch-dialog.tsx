@@ -13,7 +13,7 @@ import { z } from "zod";
 import { UpdateBatchSchema } from "@/schema/batchSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdateBatchMutation } from "@/lib/redux/features/batch/batchSlice";
+// import { useUpdateBatchMutation } from "@/lib/redux/features/batch/batchSlice";
 import { serverUrl } from "@/config";
 import { HandelToUpdateBatch } from "@/actions/batch";
 
@@ -22,7 +22,7 @@ type IUpdateBatchProps = {
   data: any;
 };
 const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
-  const [updateBatch, { isLoading }] = useUpdateBatchMutation();
+  // const [updateBatch, { isLoading }] = useUpdateBatchMutation();
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const [courses, setCourses] = useState([]);
@@ -76,44 +76,45 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
     const duration = parseInt(event.target.value);
     form.setValue("duration", duration);
   };
-  
-  const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
-    const id = await data?._id;
-    await HandelToUpdateBatch(
-      id,
-      updateBatch,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
-  };
 
+  // const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
+  //   const id = await data?._id;
+  //   await HandelToUpdateBatch(
+  //     id,
+  //     updateBatch,
+  //     values,
+  //     setSuccess,
+  //     setError,
+  //     setOpen,
+  //     form
+  //   );
+  // };
+  const onSubmit = () => {};
   return (
-    <DialogContent className="sm:max-w-lg">
-      <DialogHeader>
-        <DialogTitle>
-          <Title>Update Batch</Title>
-        </DialogTitle>
-        <DialogDescription>
-          change batch data here. Click submit when you&apos;re done.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <BatchForm
-          setOpen={setOpen}
-          error={error}
-          success={success}
-          form={form}
-          onSubmit={onSubmit}
-          isLoading={isLoading}
-          setSearch={setSearch}
-          courses={courses}
-          handleDurationChange={handleDurationChange}
-        />
-      </div>
-    </DialogContent>
+    <></>
+    // <DialogContent className="sm:max-w-lg">
+    //   <DialogHeader>
+    //     <DialogTitle>
+    //       <Title>Update Batch</Title>
+    //     </DialogTitle>
+    //     <DialogDescription>
+    //       change batch data here. Click submit when you&apos;re done.
+    //     </DialogDescription>
+    //   </DialogHeader>
+    //   <div className="grid gap-4 py-4">
+    //     <BatchForm
+    //       setOpen={setOpen}
+    //       error={error}
+    //       success={success}
+    //       form={form}
+    //       onSubmit={onSubmit}
+    //       isLoading={isLoading}
+    //       setSearch={setSearch}
+    //       courses={courses}
+    //       handleDurationChange={handleDurationChange}
+    //     />
+    //   </div>
+    // </DialogContent>
   );
 };
 

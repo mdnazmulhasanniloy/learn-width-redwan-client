@@ -10,12 +10,11 @@ import {
 import Title from "@/components/ui/title";
 import React, { useEffect, useState } from "react";
 import BatchForm from "./batch-form";
-import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { batchSchema } from "@/schema/batchSchema";
 import { serverUrl } from "@/config";
-import { useAddBatchMutation } from "@/lib/redux/features/batch/batchSlice";
+// import { useAddBatchMutation } from "@/lib/redux/features/batch/batchSlice";
 import { z } from "zod";
 import { HandelToAddBatch } from "@/actions/batch";
 
@@ -23,7 +22,7 @@ type IAddBatchDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
 const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
-  const [addBatch, { isLoading }] = useAddBatchMutation();
+  // const [addBatch, { isLoading }] = useAddBatchMutation();
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
   const [courses, setCourses] = useState([]);
@@ -64,16 +63,17 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
     return () => subscription.unsubscribe();
   });
 
-  const onSubmit = async (values: z.infer<typeof batchSchema>) => {
-    await HandelToAddBatch(
-      addBatch,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
-  };
+  // const onSubmit = async (values: z.infer<typeof batchSchema>) => {
+  //   await HandelToAddBatch(
+  //     addBatch,
+  //     values,
+  //     setSuccess,
+  //     setError,
+  //     setOpen,
+  //     form
+  //   );
+  // };
+  const onSubmit = () => {};
 
   const handleDurationChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -83,29 +83,30 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
   };
 
   return (
-    <DialogContent className="sm:max-w-lg">
-      <DialogHeader>
-        <DialogTitle>
-          <Title>Add Batch</Title>
-        </DialogTitle>
-        <DialogDescription>
-          Make a batch here. Click submit when you&apos;re done.
-        </DialogDescription>
-      </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <BatchForm
-          setOpen={setOpen}
-          error={error}
-          success={success}
-          form={form}
-          onSubmit={onSubmit}
-          isLoading={isLoading}
-          setSearch={setSearch}
-          courses={courses}
-          handleDurationChange={handleDurationChange}
-        />
-      </div>
-    </DialogContent>
+    <></>
+    // <DialogContent className="sm:max-w-lg">
+    //   <DialogHeader>
+    //     <DialogTitle>
+    //       <Title>Add Batch</Title>
+    //     </DialogTitle>
+    //     <DialogDescription>
+    //       Make a batch here. Click submit when you&apos;re done.
+    //     </DialogDescription>
+    //   </DialogHeader>
+    //   <div className="grid gap-4 py-4">
+    //     <BatchForm
+    //       setOpen={setOpen}
+    //       error={error}
+    //       success={success}
+    //       form={form}
+    //       onSubmit={onSubmit}
+    //       // isLoading={isLoading}
+    //       setSearch={setSearch}
+    //       courses={courses}
+    //       handleDurationChange={handleDurationChange}
+    //     />
+    //   </div>
+    // </DialogContent>
   );
 };
 

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import "react-loading-skeleton/dist/skeleton.css";
-import { ToastProvider } from "@/components/providers/toaster-providers";
-import ReduxStoreProvider from "@/components/providers/store-provider";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
+// import "react-loading-skeleton/dist/skeleton.css";
+import Providers from "@/lib/Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,16 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ReduxStoreProvider>
-      <html lang="en">
-        <head>
-          <link rel="icon" href="/Logo.svg" className="h-[150px] w-[150px]" />
-        </head>
-        <body className={inter.className}>
-          <ToastProvider />
-          {children}
-        </body>
-      </html>
-    </ReduxStoreProvider>
+    <html lang="en">
+      <head>
+        <link rel="icon" href="/Logo.svg" className="h-[150px] w-[150px]" />
+      </head>
+      <Providers>
+        <body className={inter.className}>{children}</body>
+      </Providers>
+    </html>
   );
 }
