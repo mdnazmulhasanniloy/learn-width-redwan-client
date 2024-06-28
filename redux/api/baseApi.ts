@@ -1,13 +1,14 @@
 import { serverUrl } from "@/config";
+import { axiosBaseQuery } from "@/helpers/axios/axiosBaseQuery";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const apiSlice = createApi({
+const baseApi = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({
-    baseUrl: serverUrl,
+  baseQuery: axiosBaseQuery({
+    baseUrl: serverUrl as string,
   }),
   tagTypes: ["user", "course", "batch", "module", "lecture"],
   endpoints: (builder) => ({}),
 });
 
-export default apiSlice;
+export default baseApi;

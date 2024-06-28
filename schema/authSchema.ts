@@ -39,4 +39,14 @@ export const LoginSchema = z.object({
     .min(6, {
       message: "name must be at least 6 characters.",
     }),
+  deviceIdentifier: z.any(),
+});
+
+export const OtpSchema = z.object({
+  otp: z.string().min(4, {
+    message: "Your one-time password must be 4 characters.",
+  }),
+});
+export const sendOtpSchema = z.object({
+  email: z.string({ required_error: "email is required" }).email(),
 });

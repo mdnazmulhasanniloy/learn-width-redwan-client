@@ -9,14 +9,14 @@ const font = Poppins({
 
 interface IHeaderProps {
   label: string;
+  title?: any;
 }
-const Header = ({ label }: IHeaderProps) => {
+const Header = ({ label, title }: IHeaderProps) => {
   return (
-    <div className="w-full flex flex-col gap-y-4 items-center justify-center">
-      <h1 className={cn("text-3xl font-semibold", font.className)}>🔐 Auth</h1>
-      <p className="text-muted-foreground text-sm">{label}</p>
+    <div className="absolute top-[-56px] left-[35%] rounded-full h-28 w-28 shadow-lg flex items-center justify-center bg-white">
+      <h1 className={cn("font-semibold")}>{title || "🔐 Auth"}</h1>
     </div>
   );
 };
-
+// w-full flex flex-col gap-y-4 items-center justify-center
 export default Header;

@@ -22,79 +22,61 @@ import {
 import FormSuccess from "../form-success";
 import { Loader2 } from "lucide-react";
 import { LoginSchema } from "@/schema/authSchema";
-import {
-  useSendEmailVerification,
-  useSignInWithEmailAndPassword,
-  useSignOut,
-} from "react-firebase-hooks/auth";
-import { useUerLoginMutation } from "@/lib/redux/features/user/userSlice";
-import auth from "@/firebase/firebase.auth";
+import { useUserLoginMutation } from "@/redux/api/authApi";
+import { StoreUserInfo } from "@/service/auth.service";
+import { getFromLocalStorage } from "@/utils/local-storage";
 import { useRouter } from "next/navigation";
 
 const SignInForm = () => {
-  const [signInFn, { isLoading }] = useUerLoginMutation();
+  const [userLoginFn, { isLoading }] = useUserLoginMutation();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState<string | undefined>("");
   const [error, setError] = useState<string | undefined>("");
-  const [signInWithEmailAndPassword, user, loginLoading, signInError] =
-    useSignInWithEmailAndPassword(auth);
-  const [sendEmailVerification, sending, verifyEmailError] =
-    useSendEmailVerification(auth);
-  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       email: "",
       password: "",
+      deviceIdentifier: null,
     },
   });
 
   const [isShow, setIsShow] = useState(false);
   const { isSubmitting, isValid, errors } = form?.formState;
-  const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
     setError("");
     setSuccess("");
     setLoading(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        values.email,
-        values.password
-      );
-      if (!userCredential?.user?.emailVerified) {
-        await sendEmailVerification();
-        await signOut();
-        setLoading(false);
-        return setError(
-          "This Email is not verified, please check your mail box"
-        );
-      }
 
-      const res: any = await signInFn(values);
-      const data: any = { ...res.data };
-      if (data?.success) {
-        setSuccess(data?.message);
+    try {
+      const deviceIdentifier = getFromLocalStorage("deviceIdentifier");
+      values.deviceIdentifier = deviceIdentifier;
+      const res = await userLoginFn(values).unwrap();
+
+      console.log(res);
+      if (res.success) {
+        // console.log(res?.data?.accessToken, res?.data?.user?.loggedInDevice);
+        StoreUserInfo({
+          accessToken: res?.data?.accessToken,
+          deviceIdentifier: res?.data?.deviceIdentifier,
+        });
+
+        setError("");
         setLoading(false);
-        form.reset();
+        setSuccess(res?.message);
         router.push("/");
       } else {
-        let errorMessage = data?.message || "An error occurred";
-        // Check if there are individual error messages
-        if (data?.errorMessages) {
-          // Format the individual error message
-          const individualErrorMessage = data?.errorMessages?.map(
-            (error: { path: string; message: string }) =>
-              `${error.path}: ${error.message} \n`
-          );
-          errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
-        }
-        setError(errorMessage);
+        setSuccess("");
         setLoading(false);
+        setError(res?.message);
       }
-    } catch (err: any) {
-      throw setError(err?.message);
+    } catch (error: any) {
+      setSuccess("");
+      setLoading(false);
+      setError(error.message);
     }
   };
 
@@ -103,10 +85,6 @@ const SignInForm = () => {
       headerLabel="Welcome to sign in page"
       backButtonLabel="Don't have an account?"
       backButtonLink="/sign-up"
-      showSocial
-      setLoading={setLoading}
-      setSuccess={setSuccess}
-      setError={setError}
     >
       <>
         <FormError message={error} />

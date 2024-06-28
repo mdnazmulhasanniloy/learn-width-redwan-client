@@ -9,56 +9,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Header from "./header";
-import Social from "./social";
 import BackButton from "./back-button";
 
 interface ICardWrapperProps {
   children: React.ReactElement;
   headerLabel: string;
-  backButtonLabel: string;
-  backButtonLink: string;
-  showSocial?: boolean;
-  setSuccess: (
-    value:
-      | string
-      | undefined
-      | ((prev: string | undefined) => string | undefined)
-  ) => void;
-  setError: (
-    value:
-      | string
-      | undefined
-      | ((prev: string | undefined) => string | undefined)
-  ) => void;
-  setLoading: (value: boolean | ((prev: boolean) => boolean)) => void;
+  backButtonLabel?: string;
+  backButtonLink?: string;
+  title?: any;
 }
 const CardWrapper = ({
   children,
   headerLabel,
   backButtonLabel,
   backButtonLink,
-  showSocial,
-  setLoading,
-  setSuccess,
-  setError,
+  title,
 }: ICardWrapperProps) => {
   return (
     <Card className="w-[400px] shadow-md">
-      <CardHeader>
-        <Header label={headerLabel} />
+      <CardHeader className="relative">
+        <Header label={headerLabel} title={title} />
       </CardHeader>
       <CardContent>{children}</CardContent>
-      {showSocial && (
-        <CardFooter>
-          <Social
-            setLoading={setLoading}
-            setSuccess={setSuccess}
-            setError={setError}
-          />
-        </CardFooter>
-      )}
       <CardFooter>
-        <BackButton label={backButtonLabel} link={backButtonLink} />
+        {backButtonLabel && backButtonLink && (
+          <BackButton label={backButtonLabel} link={backButtonLink} />
+        )}
       </CardFooter>
     </Card>
   );

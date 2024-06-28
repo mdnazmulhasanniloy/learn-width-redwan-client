@@ -1,7 +1,7 @@
 "use client";
 
 import { RegisterSchema } from "@/schema/authSchema";
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,115 +21,54 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import auth from "@/firebase/firebase.auth";
-import {
-  useCreateUserWithEmailAndPassword,
-  useSendEmailVerification,
-  useSignOut,
-  useUpdateProfile,
-} from "react-firebase-hooks/auth";
-import { useUerRegisterMutation } from "@/lib/redux/features/user/userSlice";
+import { useUserRegistrationMutation } from "@/redux/api/authApi";
+import { StoreOtpInfo } from "@/service/auth.service";
 import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
-  const [registerFn, { isLoading }] = useUerRegisterMutation();
+  const [registerFn] = useUserRegistrationMutation();
   const [isShow, setIsShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
-  const [
-    createUserWithEmailAndPassword,
-    user,
-    createUserLoading,
-    createUserError,
-  ] = useCreateUserWithEmailAndPassword(auth);
-  const [updateProfile, updating, updateUserError] = useUpdateProfile(auth);
-  const [sendEmailVerification, sending, verifyEmailError] =
-    useSendEmailVerification(auth);
-  const [signOut, signOutLoading, signOutError] = useSignOut(auth);
-  const router = useRouter();
-
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       email: "",
       password: "",
+      name: "",
     },
   });
 
   const { isSubmitting, isValid, errors } = form?.formState;
-  useEffect(() => {
-    if (createUserError) {
-      setError(createUserError.message);
-      setLoading(false);
-    }
-    if (updateUserError) {
-      setError(updateUserError.message);
-      setLoading(false);
-    }
-    if (verifyEmailError) {
-      setError(verifyEmailError.message);
-      setLoading(false);
-    }
-
-    if (createUserLoading || updating || sending || isLoading) setLoading(true);
-  }, [
-    createUserError,
-    updateUserError,
-    verifyEmailError,
-    createUserLoading,
-    updating,
-    sending,
-    isLoading,
-  ]);
+  const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
-    setLoading(true);
     setSuccess("");
     setError("");
+    setLoading(true);
+    console.log(values);
+    const res = await registerFn(values).unwrap();
+    console.log(res);
     try {
-      const user = await createUserWithEmailAndPassword(
-        values?.email,
-        values?.password
-      );
+      if (res.success) {
+        // console.log(res?.data?.accessToken, res?.data?.user?.loggedInDevice);
+        StoreOtpInfo({
+          token: res?.data.token,
+        });
 
-      if (user?.user?.email) {
-        const userUpdate = await updateProfile({ displayName: values?.name });
-        if (userUpdate) {
-          const register: any = await registerFn(values);
-
-          const data: any = { ...register.data };
-
-          if (data?.success) {
-            const success = await sendEmailVerification();
-
-            if (success) {
-              setSuccess("Please check your email to verify");
-              setLoading(false);
-              form.reset();
-              setTimeout(async () => {
-                await signOut();
-                router.push("/sign-in");
-              }, 5000);
-            }
-          } else {
-            let errorMessage = data?.message || "An error occurred";
-            // Check if there are individual error messages
-            if (data?.errorMessages) {
-              // Format the individual error message
-              const individualErrorMessage = data?.errorMessages?.map(
-                (error: { path: string; message: string }) =>
-                  `${error.path}: ${error.message} \n`
-              );
-              errorMessage = `${errorMessage}: \n ${individualErrorMessage}`;
-            }
-            setError(errorMessage);
-            setLoading(false);
-          }
-        }
+        setError("");
+        setLoading(false);
+        setSuccess(res?.message);
+        router.push("/otp/verify");
+      } else {
+        setSuccess("");
+        setLoading(false);
+        setError(res?.message);
       }
     } catch (error: any) {
-      console.error(error);
+      setSuccess("");
+      setLoading(false);
       setError(error.message);
     }
   };
@@ -139,10 +78,6 @@ const SignUpForm = () => {
       headerLabel="Welcome to sign up page"
       backButtonLabel="Have an account?"
       backButtonLink="/sign-in"
-      showSocial
-      setLoading={setLoading}
-      setSuccess={setSuccess}
-      setError={setError}
     >
       <>
         <FormError message={error} />
@@ -159,7 +94,7 @@ const SignUpForm = () => {
                     <Input
                       {...field}
                       disabled={loading}
-                      placeholder="Mr Jondo"
+                      placeholder="Mr Jodo"
                       className={cn(
                         "p-3 border rounded-lg",
                         errors?.email ? "border-red-400" : "border-sky-400"

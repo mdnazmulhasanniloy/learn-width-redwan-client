@@ -1,5 +1,5 @@
 "use client";
-import apiSlice from "../api/apiSlice";
+import apiSlice from "../../../../redux/api/baseApi";
 
 const lectureApi = apiSlice?.injectEndpoints({
   endpoints: (builder) => ({
