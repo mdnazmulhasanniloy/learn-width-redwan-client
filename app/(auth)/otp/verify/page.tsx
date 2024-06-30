@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import CardWrapper from "@/components/auth/card-wrapper";
@@ -7,10 +9,8 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -24,10 +24,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { setToLocalStorage } from "./../../../../utils/local-storage";
+import { setToLocalStorage } from "@/utils/local-storage";
 import { GetInfoFromStorage, StoreUserInfo } from "@/service/auth.service";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import { useRouter } from "next/navigation";
+import otpImage from "@/assets/auth-images/otp.jpg";
+import Image from "next/image";
 
 const VerifyOtp = () => {
   const [verifyOtpFn] = useVerifyOtpMutation();
@@ -69,7 +71,13 @@ const VerifyOtp = () => {
   };
   return (
     <CardWrapper
-      title="🔐 OTP Verify"
+      title={
+        <Image
+          src={otpImage}
+          alt="signIn"
+          className="w-full h-full rounded-full object-cover"
+        />
+      }
       headerLabel="enter your OTP to verify"
       backButtonLabel="Resend OTP?"
       backButtonLink="/otp/resend"

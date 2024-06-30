@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 import React from "react";
 import {
@@ -26,8 +28,8 @@ const CardWrapper = ({
   title,
 }: ICardWrapperProps) => {
   return (
-    <Card className="w-[400px] shadow-md">
-      <CardHeader className="relative">
+    <Card className="w-[400px] shadow-md border border-sky-400">
+      <CardHeader className="relative ">
         <Header label={headerLabel} title={title} />
       </CardHeader>
       <CardContent>{children}</CardContent>

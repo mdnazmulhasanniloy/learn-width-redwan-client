@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import * as z from "zod";
@@ -5,6 +7,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import signInImage from "@/assets/auth-images/register.png";
 
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -26,6 +29,7 @@ import { useUserLoginMutation } from "@/redux/api/authApi";
 import { StoreUserInfo } from "@/service/auth.service";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const SignInForm = () => {
   const [userLoginFn, { isLoading }] = useUserLoginMutation();
@@ -82,6 +86,9 @@ const SignInForm = () => {
 
   return (
     <CardWrapper
+      title={
+        <Image src={signInImage} alt="signIn" className="p-4 object-fill" />
+      }
       headerLabel="Welcome to sign in page"
       backButtonLabel="Don't have an account?"
       backButtonLink="/sign-up"

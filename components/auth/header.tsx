@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 import { cn } from "@/lib/utils";
 import { Poppins } from "next/font/google";
@@ -13,8 +15,8 @@ interface IHeaderProps {
 }
 const Header = ({ label, title }: IHeaderProps) => {
   return (
-    <div className="absolute top-[-56px] left-[35%] rounded-full h-28 w-28 shadow-lg flex items-center justify-center bg-white">
-      <h1 className={cn("font-semibold")}>{title || "🔐 Auth"}</h1>
+    <div className="absolute top-[-56px] left-[35%] rounded-full h-28 w-28 shadow-lg flex items-center justify-center bg-white border border-sky-400">
+      {title ? title : "🔐"}
     </div>
   );
 };

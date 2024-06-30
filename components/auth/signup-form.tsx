@@ -1,3 +1,5 @@
+/** @format */
+
 "use client";
 
 import { RegisterSchema } from "@/schema/authSchema";
@@ -13,6 +15,7 @@ import CardWrapper from "@/components/auth/card-wrapper";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import signInImage from "@/assets/auth-images/register.png";
 import {
   Form,
   FormControl,
@@ -24,6 +27,7 @@ import {
 import { useUserRegistrationMutation } from "@/redux/api/authApi";
 import { StoreOtpInfo } from "@/service/auth.service";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const SignUpForm = () => {
   const [registerFn] = useUserRegistrationMutation();
@@ -75,6 +79,9 @@ const SignUpForm = () => {
 
   return (
     <CardWrapper
+      title={
+        <Image src={signInImage} alt="signIn" className="p-4 object-fill" />
+      }
       headerLabel="Welcome to sign up page"
       backButtonLabel="Have an account?"
       backButtonLink="/sign-in"
