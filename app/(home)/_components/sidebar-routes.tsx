@@ -5,21 +5,21 @@ import { DefaultRoutes } from "./routes";
 import Link from "next/link";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useUserLogoutMutation } from "@/lib/redux/features/user/userSlice";
+// import { useUserLogoutMutation } from "@/lib/redux/features/user/userSlice";
 import { useRouter } from "next/navigation";
 
 const SidebarRoutes = () => {
-  const [logOut, { data, isLoading, isSuccess, isError }] =
-    useUserLogoutMutation();
+  // const [logOut, { data, isLoading, isSuccess, isError }] =
+  //   useUserLogoutMutation();
   const router = useRouter();
 
   const handelToSignOut = async () => {};
 
-  useEffect(() => {
-    if (isLoading) {
-      toast.loading("Loading...", { id: "sign_out" });
-    }
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     toast.loading("Loading...", { id: "sign_out" });
+  //   }
+  // }, [isLoading]);
 
   return (
     <div className="flex flex-col w-ful">

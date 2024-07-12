@@ -4,22 +4,20 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DefaultRoutes } from "./routes";
-import { useUserLogoutMutation } from "@/lib/redux/features/user/userSlice";
-import toast from "react-hot-toast";
-import { useEffect } from "react";
+// import { useUserLogoutMutation } from "@/lib/redux/features/user/userSlice";
 
 const NevItem = () => {
-  const [logOut, { data, isLoading, isSuccess, isError }] =
-    useUserLogoutMutation();
+  // const [logOut, { data, isLoading, isSuccess, isError }] =
+  //   useUserLogoutMutation();
   const pathname = usePathname();
 
   const handelToSignOut = async () => {};
 
-  useEffect(() => {
-    if (isLoading) {
-      toast.loading("Loading...", { id: "sign_out" });
-    }
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     toast.loading("Loading...", { id: "sign_out" });
+  //   }
+  // }, [isLoading]);
   return (
     <div className="hidden md:flex h-full items-center px-4">
       <div className="flex gap-5">

@@ -24,12 +24,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { setToLocalStorage } from "@/utils/local-storage";
-import { GetInfoFromStorage, StoreUserInfo } from "@/service/auth.service";
+import {
+  removeFromLocalStorage,
+  setToLocalStorage,
+} from "@/utils/local-storage";
+import { StoreUserInfo } from "@/service/auth.service";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import { useRouter } from "next/navigation";
 import otpImage from "@/assets/auth-images/otp.jpg";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const VerifyOtp = () => {
   const [verifyOtpFn] = useVerifyOtpMutation();
@@ -45,10 +49,9 @@ const VerifyOtp = () => {
   });
   const onSubmit = async (data: z.infer<typeof OtpSchema>) => {
     try {
-      const otpToken = getFromLocalStorage("otpToken");
-      const res: any = await verifyOtpFn({ data, otpToken }).unwrap();
-      console.log(res);
+      const res: any = await verifyOtpFn(data).unwrap();
       if (res?.success) {
+        removeFromLocalStorage("otpToken");
         StoreUserInfo({
           accessToken: res?.data?.accessToken,
           deviceIdentifier: res?.data?.deviceIdentifier,
@@ -67,7 +70,6 @@ const VerifyOtp = () => {
       setLoading(false);
       setError(error?.message);
     }
-    console.log(data);
   };
   return (
     <CardWrapper
@@ -88,7 +90,10 @@ const VerifyOtp = () => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="my-4 flex items-center justify-center"
+            className={cn(
+              "my-4 flex items-center justify-center",
+              loading && "cursor-wait"
+            )}
           >
             <FormField
               control={form.control}
@@ -96,7 +101,12 @@ const VerifyOtp = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputOTP maxLength={6} {...field} className="w-full">
+                    <InputOTP
+                      maxLength={6}
+                      {...field}
+                      className="w-full"
+                      disabled={loading}
+                    >
                       <InputOTPGroup className="w-full flex gap-5 justify-center items-center">
                         <InputOTPSlot
                           index={0}

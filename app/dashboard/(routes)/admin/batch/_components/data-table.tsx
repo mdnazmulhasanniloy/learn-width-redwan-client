@@ -2,40 +2,40 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Title from "@/components/ui/title";
-import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FilePenLine, Files, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import moment from "moment";
-import {
-  useRemoveBatchMutation,
-  useUpdateBatchMutation,
-} from "@/lib/redux/features/batch/batchSlice";
+ 
 import { Dialog } from "@/components/ui/dialog";
 import AddBatchDialog from "./add-batch-dialog";
 import UpdateBatchDialog from "./update-batch-dialog";
 import { handelToActive, handelToDelete } from "@/actions/shared/shared";
+import { useRemoveBatchMutation, useUpdateBatchMutation } from "@/redux/api/batchApi";
+import { Pagination } from "react-pagination-bar";
 
-type IData = {
+// type IData = {
+//   data: any[];
+//   success: boolean;
+//   message: string; 
+//   statusCode: number;
+// };
+type DataTableProps = {
   data: any[];
-  success: boolean;
-  message: string;
   meta: {
     page: number;
     limit: number;
     total: number;
-  };
-  statusCode: number;
-};
-type DataTableProps = {
-  data: IData; // Change 'any' to the actual type of your data array if possible
-  // Change 'Record<string, any>' to the actual type of your meta object if possible
-  setSearch: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
-  setMeta: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
+  };  
+   
+  setSearch: (value: any) => void;  
+  setPage: (value: any) => void;  
 };
 
 const DataTable = ({
-  data: { data, meta },
-  setMeta,
+  data,
+  meta,
+  setPage,
   setSearch,
 }: DataTableProps) => {
   const [removeBatch, deleteResult] = useRemoveBatchMutation();
@@ -193,8 +193,30 @@ const DataTable = ({
               </div>
             )}
           </div>
-          <div className="paginate">
-            <Button
+          <div className="mt-10 flex items-center justify-end mr-10">
+            <Pagination
+              customClassNames={{
+                rpbItemClassName:
+                  "h-10 w-10 flex items-center justify-center border border-[#0369a1]  hover:bg-[#0369a1] hover:text-white text-[#0369a1] rounded-[100%] transition-all duration-200",
+                rpbItemClassNameActive: "text-[#fff] bg-[#0369a1]",
+                rpbGoItemClassName: "custom-go-item",
+                rpbItemClassNameDisable: "opacity-20 cursor-not-allowed",
+                rpbProgressClassName:
+                  "h-[1.5px] mt-5 bg-[#0369a1] rounded-full",
+                rpbRootClassName: "custom-root",
+              }}
+              // withProgressBar={true}
+              currentPage={meta?.page}
+              itemsPerPage={meta?.limit}
+              onPageChange={(pageNumber: number) => setPage(pageNumber)}
+              totalItems={meta?.total}
+              startLabel={<ChevronFirst />}
+              endLabel={<ChevronLast />}
+              nextLabel={<ChevronRight />}
+              prevLabel={<ChevronLeft />}
+              pageNeighbours={1}
+            />
+            {/* <Button
               variant="outline"
               size="sm"
               onClick={() => setMeta({ ...meta, page: meta?.page - 1 })}
@@ -209,7 +231,7 @@ const DataTable = ({
               disabled={Math.ceil(meta?.total / meta?.limit) === meta?.page}
             >
               Next
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>

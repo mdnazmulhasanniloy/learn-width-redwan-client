@@ -7,3 +7,13 @@ export interface IMeta {
   size?: number;
   search?: string;
 }
+
+export interface responseSuccessType {
+  data: any;
+  meta?: IMeta;
+}
+export interface responseErrorType {
+  statusCode: number;
+  message: string;
+  errorMessages?: any;
+}

@@ -5,39 +5,49 @@ import { Dialog } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
 import { formatPrice } from "@/lib/format";
 import {
-  useRemoveCourseMutation,
-  useUpdateCourseMutation,
-} from "@/lib/redux/features/courses/coursesApi";
-import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
+  ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
+  FilePenLine,
+  Files,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AddCourseDialog from "./add-course-dialog";
 import UpdateCourseDialog from "./update-course-dialog";
 import { handelToActive, handelToDelete } from "@/actions/shared/shared";
+import { Pagination } from "react-pagination-bar";
+import {
+  useRemoveCourseMutation,
+  useUpdateCourseMutation,
+} from "@/redux/api/courseApi";
 
 type DataTableProps = {
   data: any[];
   meta: Record<string, any>;
+  setPage: (value: any) => void;
   setSearch: (value: any) => void;
-  setMeta: (value: any) => void;
 };
 
-const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
-  const [deleteCourse, deleteResult] = useRemoveCourseMutation();
-  const [updateCourse, updateResult] = useUpdateCourseMutation();
+const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
+  const [deleteCourse] = useRemoveCourseMutation();
+  const [updateCourse] = useUpdateCourseMutation();
   const [courseData, setCourseData] = useState({});
   const [open, setOpen] = useState(false);
   const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
 
-  useEffect(() => {
-    if (deleteResult?.isLoading) {
-      toast.loading("Deleting...", { id: "removeItem" });
-    }
+  // useEffect(() => {
+  //   if (deleteResult?.isLoading) {
+  //     toast.loading("Deleting...", { id: "removeItem" });
+  //   }
 
-    if (updateResult?.isLoading) {
-      toast.loading("Loading...", { id: "updateItem" });
-    }
-  }, [deleteResult, updateResult]);
+  //   if (updateResult?.isLoading) {
+  //     toast.loading("Loading...", { id: "updateItem" });
+  //   }
+  // }, [deleteResult, updateResult]);
 
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
@@ -101,7 +111,9 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
                     data?.map((item: any, i: number) => (
                       <tr key={item?._id}>
                         <td className="p-2 whitespace-nowrap text-center">
-                          <div className="flex items-center">{i + 1}</div>
+                          <div className="flex items-center">
+                            {(meta?.page - 1) * meta?.limit + i + 1}
+                          </div>
                         </td>
                         <td className="p-2 whitespace-nowrap   text-center">
                           {item?.name}
@@ -182,8 +194,30 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
               </div>
             )}
           </div>
-          <div className="paginate">
-            <Button
+          <div className="mt-10 flex items-center justify-end mr-10">
+            <Pagination
+              customClassNames={{
+                rpbItemClassName:
+                  "h-10 w-10 flex items-center justify-center border border-[#0369a1]  hover:bg-[#0369a1] hover:text-white text-[#0369a1] rounded-[100%] transition-all duration-200",
+                rpbItemClassNameActive: "text-[#fff] bg-[#0369a1]",
+                rpbGoItemClassName: "custom-go-item",
+                rpbItemClassNameDisable: "opacity-20 cursor-not-allowed",
+                rpbProgressClassName:
+                  "h-[1.5px] mt-5 bg-[#0369a1] rounded-full",
+                rpbRootClassName: "custom-root",
+              }}
+              // withProgressBar={true}
+              currentPage={meta?.page}
+              itemsPerPage={meta?.limit}
+              onPageChange={(pageNumber: number) => setPage(pageNumber)}
+              totalItems={meta?.total}
+              startLabel={<ChevronFirst />}
+              endLabel={<ChevronLast />}
+              nextLabel={<ChevronRight />}
+              prevLabel={<ChevronLeft />}
+              pageNeighbours={1}
+            />
+            {/* <Button
               variant="outline"
               size="sm"
               onClick={() => setMeta({ ...meta, page: meta?.page - 1 })}
@@ -198,7 +232,7 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
               disabled={Math.ceil(meta?.total / meta?.limit) === meta?.page}
             >
               Next
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>

@@ -1,26 +1,36 @@
 "use client";
-import React, { useEffect } from "react";
-import { useGetCourseQuery } from "@/lib/redux/features/courses/coursesApi";
+import React, { useEffect, useState } from "react";
+// import { useGetCourseQuery } from "@/lib/redux/features/courses/coursesApi";
 import HomeCoursesCard from "./home_courses_card";
 import { ICourse } from "./constants";
 import { HoverOutlineButton } from "@/components/ui/hover-button";
 import Title from "@/components/ui/title";
 import { motion } from "framer-motion";
 import LoadingCard from "./loadingCard";
+import { useGetAllCourseQuery } from "@/redux/api/courseApi";
 
 const HomePageCourses = () => {
-  const [meta, setMeta] = React.useState({ limit: 6, page: 1, total: 5 });
+  const query: Record<string, any> = {};
+  const [limit, SetLimit] = useState(6);
+  const [page, SetPage] = useState(1);
+  const [total, SetTotal] = useState(5);
+
+  query["limit"] = limit;
+  query["page"] = page;
+  // query["sortBy"]=sortBy
+  // query["sortOrder"]=sortOrder
+  // const [meta, setMeta] = React.useState({ limit: 6, page: 1, total: 5 });
   const [search, setSearch] = React.useState("");
   const [courses, setCourses] = React.useState<ICourse[] | []>([]);
-
-  const { data, isLoading, isError, isSuccess } = useGetCourseQuery({
-    meta,
-    search,
-  });
-
+  const { data, isLoading, isSuccess } = useGetAllCourseQuery({ ...query });
+  // const { data, isLoading, isError, isSuccess } = useGetCourseQuery({
+  //   meta,
+  //   search,
+  // });
+  console.log(data);
   useEffect(() => {
     if (isSuccess) {
-      data?.success && setCourses(data?.data);
+      setCourses(data?.data);
     }
   }, [data, isSuccess]);
 

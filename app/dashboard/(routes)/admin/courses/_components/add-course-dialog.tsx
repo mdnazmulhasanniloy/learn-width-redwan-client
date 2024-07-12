@@ -7,52 +7,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
-import { useAddCourseMutation } from "@/lib/redux/features/courses/coursesApi";
 import { coursesSchema } from "@/schema/courseSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { number, z } from "zod";
+import { z } from "zod";
 import CourseForm from "./course-form";
-import { HandelToAddCourse } from "@/actions/course";
+import SuccessToast from "@/components/toast/SuccessToast";
+import { useCreateCourseMutation } from "@/redux/api/courseApi";
+import ErrorToast from "@/components/toast/errorToast";
 
 type IAddCourseDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
 
 const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
-  const [addCourse, { isLoading }] = useAddCourseMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
+  const [addCourse, { isLoading }] = useCreateCourseMutation();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
 
   const form = useForm<z.infer<typeof coursesSchema>>({
     resolver: zodResolver(coursesSchema),
     defaultValues: {
-      name: undefined,
-      duration: undefined,
-      regularPrice: undefined,
-      currentBatch: undefined,
-      thumbnail: undefined,
+      name: "",
+      duration: 0,
+      regularPrice: 0,
+      currentBatch: 0,
+      thumbnail: null,
       isActive: true,
     },
   });
 
-  const subscription = form.watch((value, { name, type }) => {
-    if (name === "duration" && value.duration !== undefined) {
-      form.setValue("duration", parseInt(String(value.duration), 10));
-      console.log(value.duration);
-    }
-    if (name === "regularPrice" && value.regularPrice !== undefined) {
-      form.setValue("regularPrice", parseInt(String(value.regularPrice), 10));
-      console.log(value.regularPrice);
-    }
-    if (name === "currentBatch" && value.currentBatch !== undefined) {
-      form.setValue("currentBatch", parseInt(String(value.currentBatch), 10));
-      console.log(value.currentBatch);
-    }
-  });
-  const handleThumbnailChange = async (
+  const handleThumbnailChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event?.target?.files && event?.target?.files[0];
@@ -62,19 +47,32 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
   };
 
   const onSubmit = async (values: z.infer<typeof coursesSchema>) => {
-    // Add thumbnail to values object
-    values = {
-      ...values,
-      thumbnail: thumbnail,
-    };
-    await HandelToAddCourse(
-      addCourse,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
+    try {
+      delete values.thumbnail;
+      const formData = new FormData();
+      // Append other form data
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail);
+      } else {
+        ErrorToast({ message: "Thumbnail is required" });
+      }
+      formData.append("data", JSON.stringify(values));
+
+      const res: any = await addCourse(formData);
+
+      if (res?.data?.success) {
+        SuccessToast(res?.data?.message);
+        setThumbnail(null);
+        setOpen(false);
+        form.reset();
+        return;
+      } else {
+        ErrorToast(res?.data);
+        return;
+      }
+    } catch (error: any) {
+      ErrorToast(error);
+    }
   };
 
   return (
@@ -91,8 +89,6 @@ const AddCourseDialog = ({ setOpen }: IAddCourseDialog) => {
         <CourseForm
           handleThumbnailChange={handleThumbnailChange}
           setOpen={setOpen}
-          error={error}
-          success={success}
           form={form}
           onSubmit={onSubmit}
           isLoading={isLoading}

@@ -28,13 +28,13 @@ import { useUserRegistrationMutation } from "@/redux/api/authApi";
 import { StoreOtpInfo } from "@/service/auth.service";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import SuccessToast from "../toast/SuccessToast";
+import ErrorToast from "../toast/errorToast";
 
 const SignUpForm = () => {
   const [registerFn] = useUserRegistrationMutation();
   const [isShow, setIsShow] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
@@ -48,10 +48,7 @@ const SignUpForm = () => {
   const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
-    setSuccess("");
-    setError("");
     setLoading(true);
-    console.log(values);
     const res = await registerFn(values).unwrap();
     console.log(res);
     try {
@@ -61,19 +58,16 @@ const SignUpForm = () => {
           token: res?.data.token,
         });
 
-        setError("");
         setLoading(false);
-        setSuccess(res?.message);
+        SuccessToast(res?.message);
         router.push("/otp/verify");
       } else {
-        setSuccess("");
         setLoading(false);
-        setError(res?.message);
+        ErrorToast(res);
       }
     } catch (error: any) {
-      setSuccess("");
       setLoading(false);
-      setError(error.message);
+      ErrorToast(error);
     }
   };
 
@@ -87,8 +81,6 @@ const SignUpForm = () => {
       backButtonLink="/sign-in"
     >
       <>
-        <FormError message={error} />
-        <FormSuccess message={success} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="my-4">
             <FormField

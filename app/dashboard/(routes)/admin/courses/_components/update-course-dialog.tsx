@@ -7,12 +7,14 @@ import {
 import Title from "@/components/ui/title";
 import React, { useState } from "react";
 import CourseForm from "./course-form";
-import { useUpdateCourseMutation } from "@/lib/redux/features/courses/coursesApi";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { updateCoursesSchema } from "@/schema/courseSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HandelToUpdateCourse } from "@/actions/course";
+import { useUpdateCourseMutation } from "@/redux/api/courseApi";
+import ErrorToast from "@/components/toast/errorToast";
+import SuccessToast from "@/components/toast/SuccessToast";
 
 type IUpdateCourseProps = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
@@ -21,8 +23,6 @@ type IUpdateCourseProps = {
 
 const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
   const [updateCourse, { isLoading }] = useUpdateCourseMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const form = useForm<z.infer<typeof updateCoursesSchema>>({
     resolver: zodResolver(updateCoursesSchema),
@@ -36,21 +36,29 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
   });
 
   const onSubmit = async (values: z.infer<typeof updateCoursesSchema>) => {
-    values = {
-      ...values,
-      thumbnail: thumbnail,
-    };
-
+    delete values.thumbnail; 
     const id = await data?._id;
-    await HandelToUpdateCourse(
-      id,
-      updateCourse,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
+
+    try {
+      const formData = new FormData();
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail);
+      }
+
+      formData.append("data", JSON.stringify(values));
+
+      const res: any = await updateCourse({ id, data: formData });
+      if (res?.data?.success) {
+        SuccessToast(res?.data?.message);
+        setOpen(false);
+        return;
+      } else {
+        ErrorToast(res?.data?.message);
+        return;
+      }
+    } catch (error) {
+      ErrorToast(error);
+    }
   };
 
   const handleThumbnailChange = async (
@@ -75,8 +83,6 @@ const UpdateCourseDialog = ({ data, setOpen }: IUpdateCourseProps) => {
         <CourseForm
           handleThumbnailChange={handleThumbnailChange}
           setOpen={setOpen}
-          error={error}
-          success={success}
           form={form}
           onSubmit={onSubmit}
           isLoading={isLoading}

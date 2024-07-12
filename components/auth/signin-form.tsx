@@ -30,12 +30,12 @@ import { StoreUserInfo } from "@/service/auth.service";
 import { getFromLocalStorage } from "@/utils/local-storage";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import SuccessToast from "../toast/SuccessToast";
+import ErrorToast from "../toast/errorToast";
 
 const SignInForm = () => {
-  const [userLoginFn, { isLoading }] = useUserLoginMutation();
+  const [userLoginFn] = useUserLoginMutation();
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
   const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -51,8 +51,6 @@ const SignInForm = () => {
   const { isSubmitting, isValid, errors } = form?.formState;
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-    setError("");
-    setSuccess("");
     setLoading(true);
 
     try {
@@ -68,19 +66,20 @@ const SignInForm = () => {
           deviceIdentifier: res?.data?.deviceIdentifier,
         });
 
-        setError("");
         setLoading(false);
-        setSuccess(res?.message);
-        router.push("/");
+        SuccessToast(res?.message);
+        if (res.data.clearSession) {
+          router.push("/clear-device");
+        } else {
+          router.push("/");
+        }
       } else {
-        setSuccess("");
         setLoading(false);
-        setError(res?.message);
+        ErrorToast(res);
       }
     } catch (error: any) {
-      setSuccess("");
+      ErrorToast(error);
       setLoading(false);
-      setError(error.message);
     }
   };
 
@@ -94,8 +93,6 @@ const SignInForm = () => {
       backButtonLink="/sign-up"
     >
       <>
-        <FormError message={error} />
-        <FormSuccess message={success} />
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="my-4">
             <FormField

@@ -1,4 +1,5 @@
-import baseApi from "@/redux/api/baseApi";
+import { tagTypes } from "../tag_types";
+import { baseApi } from "./baseApi";
 
 const AUTH_URL = "/auth";
 const USER_URL = "/users";
@@ -6,39 +7,56 @@ const OTP_URL = "/otp";
 const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     userLogin: build.mutation({
-      query: (loginData) => ({
+      query: (loginData: any) => ({
         url: `${AUTH_URL}/sign-in`,
         method: "POST",
         data: loginData,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: [tagTypes.user],
     }),
+
     userRegistration: build.mutation({
-      query: (registrationData) => ({
+      query: (registrationData: any) => ({
         url: `${USER_URL}/create-user`,
         method: "POST",
         data: registrationData,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: [tagTypes.user],
     }),
+
     verifyOtp: build.mutation({
-      query: ({ data, otpToken }) => ({
+      query: (data: any) => ({
         url: `${OTP_URL}/verify-otp`,
         method: "POST",
-        headers: {
-          token: otpToken,
-        },
         data: data,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: [tagTypes.user],
     }),
+
     resendOtp: build.mutation({
-      query: (email) => ({
+      query: (email: any) => ({
         url: `${OTP_URL}/resend-otp`,
         method: "POST",
         data: email,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: [tagTypes.user],
+    }),
+    clearDevice: build.mutation({
+      query: (email: any) => ({
+        url: `${AUTH_URL}/clear-session`,
+        method: "POST",
+        data: email,
+      }),
+      invalidatesTags: [tagTypes.user],
+    }),
+
+    signOut: build.mutation({
+      query: (email: any) => ({
+        url: `${AUTH_URL}/sign-out`,
+        method: "POST",
+        data: email,
+      }),
+      invalidatesTags: [tagTypes.user],
     }),
   }),
 });
@@ -48,4 +66,6 @@ export const {
   useUserRegistrationMutation,
   useVerifyOtpMutation,
   useResendOtpMutation,
+  useClearDeviceMutation,
+  useSignOutMutation,
 } = authApi;

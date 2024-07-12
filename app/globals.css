@@ -71,6 +71,15 @@ body,
   }
 }
 
+.custom-root ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 10px;
+  /* color:  */
+}
+
 @layer base {
   * {
     @apply border-border;

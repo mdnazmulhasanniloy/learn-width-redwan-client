@@ -15,19 +15,15 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 type ICourseFormProps = {
-  error: string | undefined;
-  success: string | undefined;
   form: any;
   onSubmit: any;
   isLoading: boolean;
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
-  handleThumbnailChange: Function;
+  handleThumbnailChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const CourseForm = ({
   setOpen,
-  error,
-  success,
   form,
   onSubmit,
   isLoading,
@@ -37,13 +33,8 @@ const CourseForm = ({
 
   return (
     <div className="py-4">
-      <FormError message={error} />
-      <FormSuccess message={success} />
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 mt-8 "
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
           <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-5">
             <FormField
               control={form.control}
@@ -72,10 +63,9 @@ const CourseForm = ({
                   <FormControl>
                     <Input
                       type="file"
-                      {...field}
-                      onChange={(e) => handleThumbnailChange(e)}
+                      onChange={handleThumbnailChange}
                       disabled={isSubmitting || isLoading}
-                      placeholder="Enter Current Batch"
+                      placeholder="Upload Thumbnail"
                       accept="image/png, image/jpeg, image/jpg"
                     />
                   </FormControl>
@@ -130,6 +120,7 @@ const CourseForm = ({
                   <FormLabel htmlFor="currentBatch">Current Batch</FormLabel>
                   <FormControl>
                     <Input
+                      type="number"
                       {...field}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Current Batch"

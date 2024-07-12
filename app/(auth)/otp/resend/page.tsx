@@ -24,12 +24,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MdOutlineMailLock } from "react-icons/md";
+import SuccessToast from "@/components/toast/SuccessToast";
+import ErrorToast from "@/components/toast/errorToast";
 
 const ResendOtpPage = () => {
   const [resendOtpFn] = useResendOtpMutation();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
+  const [loading, setLoading] = useState(false); 
   const form = useForm<z.infer<typeof sendOtpSchema>>({
     resolver: zodResolver(sendOtpSchema),
     defaultValues: {
@@ -41,8 +41,7 @@ const ResendOtpPage = () => {
   const router = useRouter();
 
   const onSubmit = async (values: z.infer<typeof sendOtpSchema>) => {
-    setSuccess("");
-    setError("");
+   
     setLoading(true);
     console.log(values);
     try {
@@ -52,19 +51,17 @@ const ResendOtpPage = () => {
           token: res?.data.token,
         });
 
-        setError("");
+     
         setLoading(false);
-        setSuccess(res?.message);
+        SuccessToast(res?.message);
         router.push("/otp/verify");
-      } else {
-        setSuccess("");
+      } else { 
         setLoading(false);
-        setError(res?.message);
+        ErrorToast(res);
       }
-    } catch (error: any) {
-      setSuccess("");
+    } catch (error: any) { 
       setLoading(false);
-      setError(error.message);
+       ErrorToast(error);
     }
   };
 
@@ -82,9 +79,7 @@ const ResendOtpPage = () => {
       backButtonLabel="Have a OTP?"
       backButtonLink="/otp/verify"
     >
-      <>
-        <FormError message={error} />
-        <FormSuccess message={success} />
+      <> 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="my-4">
             <FormField
