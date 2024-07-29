@@ -3,25 +3,43 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
-import { FilePenLine, Files, Plus, Trash2 } from "lucide-react";
+import {
+  ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
+  FilePenLine,
+  Files,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AddModuleDialog from "./add-module-dialog";
 import UpdateModuleDialog from "./update-module-dialog";
+import { handelToActive, handelToDelete } from "@/actions/shared/shared";
 import {
   useRemoveModuleMutation,
   useUpdateModuleMutation,
-} from "@/lib/redux/features/module/moduleApi";
-import { handelToActive, handelToDelete } from "@/actions/shared/shared";
+} from "@/redux/api/modules";
+import { Pagination } from "react-pagination-bar";
+import EmptyData from "@/components/ui/emptyData";
 
 type DataTableProps = {
   data: any[]; // Change 'any' to the actual type of your data array if possible
   meta: Record<string, any>; // Change 'Record<string, any>' to the actual type of your meta object if possible
   setSearch: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
-  setMeta: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
+  setPage: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
+  setLimit: (value: any) => void; // Change 'any' to the actual type of setSearch function parameter and return value if possible
 };
 
-const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
+const DataTable = ({
+  data,
+  meta,
+  setPage,
+  setLimit,
+  setSearch,
+}: DataTableProps) => {
   const [deleteModule, deleteResult] = useRemoveModuleMutation();
   const [updateModule, updateResult] = useUpdateModuleMutation();
   const [open, setOpen] = useState(false);
@@ -172,29 +190,31 @@ const DataTable = ({ data, meta, setMeta, setSearch }: DataTableProps) => {
               )}
               {/*end table body */}
             </table>
-            {data?.length === 0 && (
-              <div className="text-red-400 text-3xl my-4">
-                Oops! course not found
-              </div>
-            )}
+            {data?.length === 0 && <EmptyData />}
           </div>
-          <div className="paginate">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMeta({ ...meta, page: meta?.page - 1 })}
-              disabled={meta?.page === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMeta({ ...meta, page: meta?.page + 1 })}
-              disabled={Math.ceil(meta?.total / meta?.limit) === meta?.page}
-            >
-              Next
-            </Button>
+          <div className="mt-10 flex items-center justify-end mr-10">
+            <Pagination
+              customClassNames={{
+                rpbItemClassName:
+                  "h-10 w-10 flex items-center justify-center border border-[#0369a1]  hover:bg-[#0369a1] hover:text-white text-[#0369a1] rounded-[100%] transition-all duration-200",
+                rpbItemClassNameActive: "text-[#fff] bg-[#0369a1]",
+                rpbGoItemClassName: "custom-go-item",
+                rpbItemClassNameDisable: "opacity-20 cursor-not-allowed",
+                rpbProgressClassName:
+                  "h-[1.5px] mt-5 bg-[#0369a1] rounded-full",
+                rpbRootClassName: "custom-root",
+              }}
+              // withProgressBar={true}
+              currentPage={meta?.page}
+              itemsPerPage={meta?.limit}
+              onPageChange={(pageNumber: number) => setPage(pageNumber)}
+              totalItems={meta?.total}
+              startLabel={<ChevronFirst />}
+              endLabel={<ChevronLast />}
+              nextLabel={<ChevronRight />}
+              prevLabel={<ChevronLeft />}
+              pageNeighbours={1}
+            />
           </div>
         </div>
       </div>

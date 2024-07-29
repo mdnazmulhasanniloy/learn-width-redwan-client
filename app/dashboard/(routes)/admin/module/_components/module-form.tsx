@@ -22,8 +22,6 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 type IModuleFormProps = {
-  error: string | undefined;
-  success: string | undefined;
   form: any;
   onSubmit: Function;
   isLoading: boolean;
@@ -34,8 +32,6 @@ type IModuleFormProps = {
 
 const ModuleForm = ({
   setOpen,
-  error,
-  success,
   form,
   onSubmit,
   isLoading,
@@ -45,9 +41,6 @@ const ModuleForm = ({
   const { isSubmitting } = form.formState;
   return (
     <div className="py-4">
-      <FormError message={error} />
-      <FormSuccess message={success} />
-
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

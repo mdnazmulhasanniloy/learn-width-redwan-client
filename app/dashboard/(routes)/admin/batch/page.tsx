@@ -9,10 +9,8 @@ import ErrorToast from "@/components/toast/errorToast";
 
 const BatchPage = () => {
   const query: Record<string, any> = {};
-  const [search, setSearch] = useState<string | null | undefined>("");
-  const [sortOrder, setSortOrder] = useState<string | null | undefined>("asc");
-  const [sortBy, setSortBy] = useState<boolean>(false);
-  const [batch, setBatch] = useState([]);
+  const [search, setSearch] = useState<string | null | undefined>(""); 
+  const [batch, setBatch] = useState<any[]>([]);
 
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
@@ -20,7 +18,6 @@ const BatchPage = () => {
 
   query["limit"] = limit;
   query["page"] = page; 
-  query["sortOrder"] = sortOrder;
   query["searchTerm"] = search;
 
   const { data, isLoading, isSuccess, isError, error } = useGetBatchQuery({

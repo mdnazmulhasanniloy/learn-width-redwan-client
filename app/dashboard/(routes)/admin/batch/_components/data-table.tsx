@@ -2,58 +2,62 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Title from "@/components/ui/title";
-import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FilePenLine, Files, Plus, Trash2 } from "lucide-react";
+import {
+  ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
+  FilePenLine,
+  Files,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import moment from "moment";
- 
+
 import { Dialog } from "@/components/ui/dialog";
 import AddBatchDialog from "./add-batch-dialog";
 import UpdateBatchDialog from "./update-batch-dialog";
 import { handelToActive, handelToDelete } from "@/actions/shared/shared";
-import { useRemoveBatchMutation, useUpdateBatchMutation } from "@/redux/api/batchApi";
 import { Pagination } from "react-pagination-bar";
+import {
+  useRemoveBatchMutation,
+  useUpdateBatchMutation,
+} from "@/redux/api/batchApi";
+import { toast } from "sonner";
 
-// type IData = {
-//   data: any[];
-//   success: boolean;
-//   message: string; 
-//   statusCode: number;
-// };
 type DataTableProps = {
   data: any[];
   meta: {
     page: number;
     limit: number;
     total: number;
-  };  
-   
-  setSearch: (value: any) => void;  
-  setPage: (value: any) => void;  
+  };
+
+  setSearch: (value: any) => void;
+  setPage: (value: any) => void;
 };
 
-const DataTable = ({
-  data,
-  meta,
-  setPage,
-  setSearch,
-}: DataTableProps) => {
+const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
   const [removeBatch, deleteResult] = useRemoveBatchMutation();
   const [updateBatch, updateResult] = useUpdateBatchMutation();
   const [open, setOpen] = useState(false);
-  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
-  const [batchData, setBatchData] = useState({});
+  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false); 
+  const [modalData, setModalData] = useState({});
 
   useEffect(() => {
     if (deleteResult?.isLoading) {
       toast.loading("Deleting...", { id: "removeItem" });
+    }
+    if (deleteResult?.isSuccess) {
+      toast.success("delete Success", { id: "removeItem" });
     }
 
     if (updateResult?.isLoading) {
       toast.loading("Loading...", { id: "updateItem" });
     }
   }, [deleteResult, updateResult]);
-
+  console.log(open);
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">
@@ -71,7 +75,7 @@ const DataTable = ({
             <Button
               variant="default"
               className="flex gap-2"
-              onClick={() => setOpen(true)}
+              onClick={() => setOpen(!open)}
             >
               Add Batch <Plus />
             </Button>
@@ -173,15 +177,16 @@ const DataTable = ({
                       <button
                         className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
                         onClick={() => {
-                          setUpdateDialogIsOpen(true), setBatchData(item);
+                          setUpdateDialogIsOpen(!updateDialogIsOpen),
+                            setModalData(item);
                         }}
                       >
                         <FilePenLine />
                       </button>
 
-                      <button className="text-green-700 bg-green-200 rounded-full cursor-pointer p-2 text-sm">
+                      {/* <button className="text-green-700 bg-green-200 rounded-full cursor-pointer p-2 text-sm">
                         <Files />
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}
@@ -239,12 +244,13 @@ const DataTable = ({
       <Dialog onOpenChange={() => setOpen(!open)} open={open}>
         <AddBatchDialog setOpen={setOpen} />
       </Dialog>
-      {batchData && updateDialogIsOpen && (
+      
+      {modalData && updateDialogIsOpen && (
         <Dialog
           onOpenChange={() => setUpdateDialogIsOpen(!updateDialogIsOpen)}
           open={updateDialogIsOpen}
         >
-          <UpdateBatchDialog setOpen={setUpdateDialogIsOpen} data={batchData} />
+          <UpdateBatchDialog setOpen={setUpdateDialogIsOpen} data={modalData} />
         </Dialog>
       )}
     </div>

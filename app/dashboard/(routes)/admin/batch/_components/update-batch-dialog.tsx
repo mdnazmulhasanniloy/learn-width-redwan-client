@@ -16,42 +16,46 @@ import { zodResolver } from "@hookform/resolvers/zod";
 // import { useUpdateBatchMutation } from "@/lib/redux/features/batch/batchSlice";
 import { serverUrl } from "@/config";
 import { HandelToUpdateBatch } from "@/actions/batch";
+import { useGetAllCourseQuery } from "@/redux/api/courseApi";
+import { useUpdateBatchMutation } from "@/redux/api/batchApi";
+import { toast } from "sonner";
 
 type IUpdateBatchProps = {
-  setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
+  setOpen: (value: boolean | ((prev: boolean) => boolean))  => void;
   data: any;
 };
 const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
-  // const [updateBatch, { isLoading }] = useUpdateBatchMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
+  const [updateBatchFn, { isLoading }] = useUpdateBatchMutation();
   const [courses, setCourses] = useState([]);
-  const [search, setSearch] = useState<string | undefined>("");
-  const [meta, setMeta] = useState({ limit: 2, page: 1, total: 0 });
   const [courseId, setCourseId] = useState({
     name: data.courseId.name,
     _id: data?.courseId?._id,
+  });
+  const CourseQuery: Record<string, any> = {};
+  CourseQuery["limit"] = 999999999;
+
+  const { data: course, isSuccess } = useGetAllCourseQuery({
+    ...CourseQuery,
   });
 
   const form = useForm<z.infer<typeof UpdateBatchSchema>>({
     resolver: zodResolver(UpdateBatchSchema),
     defaultValues: {
       name: data.name,
-      duration: data.duration.toString(),
+      duration: data.duration,
       startedAt: data.startedAt,
       courseId: courseId._id,
       isActive: data.isActive,
     },
   });
+  console.log(courses);
 
   useEffect(() => {
     setCourses([]);
-    fetch(`${serverUrl}course?searchTerm=${search}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCourses(data?.data);
-      });
-  }, [setMeta, meta, search]);
+    if (isSuccess) {
+      setCourses(course?.data);
+    }
+  }, [isSuccess, course]);
 
   useEffect(() => {
     const subscription = form?.watch((value, { name, type }) => {
@@ -77,44 +81,39 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
     form.setValue("duration", duration);
   };
 
-  // const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
-  //   const id = await data?._id;
-  //   await HandelToUpdateBatch(
-  //     id,
-  //     updateBatch,
-  //     values,
-  //     setSuccess,
-  //     setError,
-  //     setOpen,
-  //     form
-  //   );
-  // };
-  const onSubmit = () => {};
+  const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
+    try {
+      toast.loading("Updating...", { id: "batch-Update" });
+      const res: any = await updateBatchFn(values);
+
+      if (res.success) {
+        toast.success(res.message, { id: "batch-Update" });
+      }
+    } catch (error: any) {
+      toast.error(error.message, { id: "batch-Update" });
+    }
+  };
   return (
-    <></>
-    // <DialogContent className="sm:max-w-lg">
-    //   <DialogHeader>
-    //     <DialogTitle>
-    //       <Title>Update Batch</Title>
-    //     </DialogTitle>
-    //     <DialogDescription>
-    //       change batch data here. Click submit when you&apos;re done.
-    //     </DialogDescription>
-    //   </DialogHeader>
-    //   <div className="grid gap-4 py-4">
-    //     <BatchForm
-    //       setOpen={setOpen}
-    //       error={error}
-    //       success={success}
-    //       form={form}
-    //       onSubmit={onSubmit}
-    //       isLoading={isLoading}
-    //       setSearch={setSearch}
-    //       courses={courses}
-    //       handleDurationChange={handleDurationChange}
-    //     />
-    //   </div>
-    // </DialogContent>
+    <DialogContent className="sm:max-w-lg">
+      <DialogHeader>
+        <DialogTitle>
+          <Title>Update Batch</Title>
+        </DialogTitle>
+        <DialogDescription>
+          change batch data here. Click submit when you&apos;re done.
+        </DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-4 py-4">
+        <BatchForm
+          setOpen={setOpen}
+          form={form}
+          onSubmit={onSubmit}
+          courses={courses}
+          isLoading={isLoading}
+          handleDurationChange={handleDurationChange}
+        />
+      </div>
+    </DialogContent>
   );
 };
 

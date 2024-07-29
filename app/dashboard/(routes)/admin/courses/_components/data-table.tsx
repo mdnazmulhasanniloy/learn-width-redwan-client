@@ -24,6 +24,7 @@ import {
   useRemoveCourseMutation,
   useUpdateCourseMutation,
 } from "@/redux/api/courseApi";
+import EmptyData from "@/components/ui/emptyData";
 
 type DataTableProps = {
   data: any[];
@@ -188,11 +189,7 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
               )}
               {/*end table body */}
             </table>
-            {data?.length === 0 && (
-              <div className="text-red-400 text-3xl my-4">
-                Oops! course not found
-              </div>
-            )}
+            {data?.length === 0 && <EmptyData />}
           </div>
           <div className="mt-10 flex items-center justify-end mr-10">
             <Pagination

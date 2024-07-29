@@ -9,25 +9,33 @@ import {
 import Title from "@/components/ui/title";
 import React, { useEffect, useState } from "react";
 import ModuleForm from "./module-form";
-import { serverUrl } from "@/config";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { moduleSchema } from "@/schema/moduleSchema";
-import { useAddModuleMutation } from "@/lib/redux/features/module/moduleApi";
-import { HandelToAddModule } from "@/actions/module";
+import { useAddModuleMutation } from "@/redux/api/modules";
+import { useGetAllCourseQuery } from "@/redux/api/courseApi";
+import { useGetBatchQuery } from "@/redux/api/batchApi";
+import ErrorToast from "@/components/toast/errorToast";
+import { toast } from "sonner";
 
 type IAddModuleDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
 const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
   const [addModule, { isLoading }] = useAddModuleMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
   const [course, setCourse] = useState<any>({});
-
+  const query: Record<string, any> = {};
+  const batchQuery: Record<string, any> = {};
+  query["limit"] = 999999999;
+  batchQuery["limit"] = 999999999;
+  batchQuery["courseId"] = course?._id;
+  const { data, isSuccess } = useGetAllCourseQuery({ ...query });
+  const { data: batch, isSuccess: batchSuccess } = useGetBatchQuery({
+    ...batchQuery,
+  });
   const form = useForm<z.infer<typeof moduleSchema>>({
     resolver: zodResolver(moduleSchema),
     defaultValues: {
@@ -35,25 +43,16 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
     },
   });
 
-  //course search
   useEffect(() => {
-    setCourses([]);
-    fetch(`${serverUrl}course`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCourses(data?.data);
-      });
-  }, []);
-
-  //batch search
-  useEffect(() => {
-    setBatches([]);
-    fetch(`${serverUrl}batch?courseId=${course?._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setBatches(data?.data);
-      });
-  }, [course]);
+    if (isSuccess) {
+      setCourses([]);
+      setCourses(data?.data);
+    }
+    if (batchSuccess) {
+      setBatches([]);
+      setBatches(batch?.data);
+    }
+  }, [batch?.data, batchSuccess, data?.data, isSuccess]);
 
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
@@ -73,14 +72,17 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
   });
 
   const onSubmit = async (values: z.infer<typeof moduleSchema>) => {
-    await HandelToAddModule(
-      addModule,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
+    toast.loading("Batch is Adding...", { id: "addBatch" });
+    try {
+      const res: any = await addModule(values).unwrap();
+      toast.success(res.message, { id: "addBatch" });
+      if (res.success) {
+        setOpen(false);
+        form.reset();
+      }
+    } catch (error) {
+      ErrorToast(error, "addBatch");
+    }
   };
   return (
     <DialogContent className="sm:max-w-lg">
@@ -95,8 +97,6 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
       <div className="grid gap-4 py-4">
         <ModuleForm
           setOpen={setOpen}
-          error={error}
-          success={success}
           form={form}
           onSubmit={onSubmit}
           isLoading={isLoading}

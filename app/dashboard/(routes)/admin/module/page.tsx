@@ -1,30 +1,44 @@
 "use client";
 
-import Loader from "@/components/ui/loader";
-// import { useGetModuleQuery } from "@/lib/redux/features/module/moduleApi";
-import React, { useState } from "react";
+import Loader from "@/components/ui/loader"; 
+import React, { useEffect, useState } from "react";
 import DataTable from "./_components/data-table";
+import { useGetModuleQuery } from "@/redux/api/modules";
 
 const ModulePage = () => {
-  const [meta, setMeta] = useState({ limit: 10, page: 1, total: 5 });
-  const [search, setSearch] = useState("");
-  // const { data, isLoading, isSuccess } = useGetModuleQuery({
-  //   meta,
-  //   search,
-  // });
+  const query: Record<string, any> = {};
+  const [module, setModule] = useState([]);
+  const [search, setSearch] = useState<string | null | undefined>("");
+  const [sortOrder, setSortOrder] = useState<string | null | undefined>("asc");
 
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+
+  query["limit"] = limit;
+  query["page"] = page;
+  query["sortOrder"] = sortOrder;
+  query["searchTerm"] = search;
+
+  const { data, isLoading, isSuccess } = useGetModuleQuery({ ...query });
+
+  useEffect(() => {
+    if (isSuccess) {
+      setModule(data?.data);
+    }
+  }, [data, isSuccess]);
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="p-6">
-      {/* <DataTable
-        data={data?.data}
+      <DataTable
+        data={module}
         meta={data?.meta}
-        setMeta={setMeta}
+        setPage={setPage}
+        setLimit={setLimit}
         setSearch={setSearch}
-      /> */}
+      />
     </div>
   );
 };

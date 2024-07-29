@@ -1,6 +1,4 @@
-"use client";
-import FormError from "@/components/form-error";
-import FormSuccess from "@/components/form-success";
+"use client"; 
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,39 +20,27 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import React from "react";
 
-type IBatchFormProps = {
-  error: string | undefined;
-  success: string | undefined;
+type IBatchFormProps = { 
   form: any;
   onSubmit: any;
   isLoading: boolean;
   courses: any;
   handleDurationChange: Function;
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
-  setSearch: (
-    value:
-      | string
-      | undefined
-      | ((prev: string | undefined) => string | undefined)
-  ) => void;
+ 
 };
 const BatchForm = ({
-  setOpen,
-  error,
-  success,
+  setOpen,  
   form,
-  onSubmit,
-  isLoading,
-  setSearch,
+  onSubmit, 
   courses,
+  isLoading,
   handleDurationChange,
 }: IBatchFormProps) => {
   const { isSubmitting } = form.formState;
 
   return (
-    <div className="py-4">
-      <FormError message={error} />
-      <FormSuccess message={success} />
+    <div className="py-4"> 
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -155,11 +141,7 @@ const BatchForm = ({
                       </SelectTrigger>
                     </FormControl>
                     <FormMessage />
-                    <SelectContent>
-                      <Input
-                        type="search"
-                        onChange={(e) => setSearch(e?.target?.value)}
-                      />
+                    <SelectContent> 
                       {courses?.length > 0 ? (
                         courses?.map((each: { _id: string; name: string }) => (
                           <SelectItem key={each?._id} value={each?._id}>

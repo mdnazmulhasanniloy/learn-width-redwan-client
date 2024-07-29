@@ -4,7 +4,7 @@ import { baseApi } from "./baseApi";
 const batchApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getBatch: builder.query({
-      query: ({ arg }) => ({
+      query: ( arg ) => ({
         url: "/batch",
         method: "GET",
         params: arg,
@@ -26,7 +26,7 @@ const batchApi = baseApi.injectEndpoints({
     //update batch
     updateBatch: builder.mutation({
       query: ({ id, data }) => ({
-        url: `batch/${id}`,
+        url: `/batch/${id}`,
         method: "PATCH",
         body: data,
       }),
@@ -36,7 +36,7 @@ const batchApi = baseApi.injectEndpoints({
     //delete course
     removeBatch: builder.mutation({
       query: (id) => ({
-        url: `batch/${id}`,
+        url: `/batch/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: [tagTypes.batch],
