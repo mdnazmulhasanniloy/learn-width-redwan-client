@@ -8,10 +8,10 @@ const COURSE_URL = "/course";
 const courseApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createCourse: builder.mutation({
-      query: (loginData: any) => ({
+      query: (data: any) => ({
         url: `${COURSE_URL}/create-course`,
         method: "POST",
-        body: loginData,
+        body: data,
       }),
       invalidatesTags: [tagTypes.course],
     }),

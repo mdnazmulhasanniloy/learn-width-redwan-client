@@ -8,13 +8,11 @@ import {
   ChevronLeft,
   ChevronRight,
   FilePenLine,
-  Files,
   Plus,
   Trash2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-
 import { Dialog } from "@/components/ui/dialog";
 import AddBatchDialog from "./add-batch-dialog";
 import UpdateBatchDialog from "./update-batch-dialog";
@@ -25,6 +23,7 @@ import {
   useUpdateBatchMutation,
 } from "@/redux/api/batchApi";
 import { toast } from "sonner";
+import EmptyData from "@/components/ui/emptyData";
 
 type DataTableProps = {
   data: any[];
@@ -33,7 +32,6 @@ type DataTableProps = {
     limit: number;
     total: number;
   };
-
   setSearch: (value: any) => void;
   setPage: (value: any) => void;
 };
@@ -42,7 +40,7 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
   const [removeBatch, deleteResult] = useRemoveBatchMutation();
   const [updateBatch, updateResult] = useUpdateBatchMutation();
   const [open, setOpen] = useState(false);
-  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false); 
+  const [updateDialogIsOpen, setUpdateDialogIsOpen] = useState(false);
   const [modalData, setModalData] = useState({});
 
   useEffect(() => {
@@ -57,7 +55,7 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
       toast.loading("Loading...", { id: "updateItem" });
     }
   }, [deleteResult, updateResult]);
-  console.log(open);
+
   return (
     <div className="flex flex-col justify-center h-full mx-auto text-center">
       <div className="w-full mx-auto bg-white rounded-lg border border-gray-300">
@@ -90,113 +88,107 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
                     <div className="font-semibold text-center">SL No:</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[20%]">
-                    <div className="font-semibold text-center">batch Name</div>
+                    <div className="font-semibold text-center">Batch Name</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center ">batch ID</div>
+                    <div className="font-semibold text-center ">Batch ID</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Duration</div>
                   </th>
-
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">start at</div>
+                    <div className="font-semibold text-center">Start At</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">course Id</div>
+                    <div className="font-semibold text-center">Course ID</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center">status</div>
+                    <div className="font-semibold text-center">Status</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Action</div>
                   </th>
                 </tr>
               </thead>
-
-              {/*start table body */}
-              {data?.length > 0 &&
-                data?.map((item: any, i: number) => (
-                  <tr key={item?._id}>
-                    <td className="p-2 whitespace-nowrap text-center">
-                      <div className="flex items-center">{i + 1}</div>
-                    </td>
-
-                    <td className="p-2 whitespace-nowrap   text-start">
-                      {item?.name}
-                    </td>
-
-                    <td className="p-2 whitespace-nowrap t text-center">
-                      {item?.id}
-                    </td>
-
-                    <td className="p-2 whitespace-nowrap text-center">
-                      {item?.duration}
-                      {"months".toLocaleLowerCase()}
-                    </td>
-
-                    <td className="p-2 whitespace-nowrap text-center">
-                      {moment(item?.startedAt).format("MMM Do YY")}
-                    </td>
-
-                    <td className="p-2 whitespace-nowrap text-center">
-                      {item?.courseId?.id}
-                    </td>
-                    <td className="p-2 whitespace-nowrap text-center">
-                      <div
-                        className="mx-auto flex justify-center w-[100px] gap-2 cursor-pointer"
-                        onClick={() =>
-                          handelToActive(item._id, !item?.isActive, updateBatch)
-                        }
-                      >
-                        {item?.isActive ? (
-                          <Badge
-                            variant="outline"
-                            className="bg-green-300 text-green-700 cursor-pointer"
-                          >
-                            Active
-                          </Badge>
-                        ) : (
-                          <Badge
-                            variant="outline"
-                            className="bg-red-300 text-red-700 cursor-pointer"
-                          >
-                            Destructive
-                          </Badge>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
-                      <button
-                        onClick={() => handelToDelete(item?._id, removeBatch)}
-                        className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
-                      >
-                        <Trash2 />
-                      </button>
-
-                      <button
-                        className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
-                        onClick={() => {
-                          setUpdateDialogIsOpen(!updateDialogIsOpen),
+              <tbody className="text-sm divide-y divide-gray-100">
+                {data?.length > 0 ? (
+                  data?.map((item: any, i: number) => (
+                    <tr key={item?._id}>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        <div className="flex items-center">{i + 1}</div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-start">
+                        {item?.name}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.id}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.duration}{" "}
+                        {`month${item?.duration > 1 ? "s" : ""}`}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {moment(item?.startedAt).format("MMM Do YY")}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.courseId?.id}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        <div
+                          className="mx-auto flex justify-center w-[100px] gap-2 cursor-pointer"
+                          onClick={() =>
+                            handelToActive(
+                              item._id,
+                              !item?.isActive,
+                              updateBatch
+                            )
+                          }
+                        >
+                          {item?.isActive ? (
+                            <Badge
+                              variant="outline"
+                              className="bg-green-300 text-green-700 cursor-pointer"
+                            >
+                              Active
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="bg-red-300 text-red-700 cursor-pointer"
+                            >
+                              Inactive
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
+                        <button
+                          onClick={() => handelToDelete(item?._id, removeBatch)}
+                          className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
+                        >
+                          <Trash2 />
+                        </button>
+                        <button
+                          className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
+                          onClick={() => {
+                            setUpdateDialogIsOpen(true);
                             setModalData(item);
-                        }}
-                      >
-                        <FilePenLine />
-                      </button>
-
-                      {/* <button className="text-green-700 bg-green-200 rounded-full cursor-pointer p-2 text-sm">
-                        <Files />
-                      </button> */}
+                          }}
+                        >
+                          <FilePenLine />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="text-center p-5">
+                      <EmptyData />
                     </td>
                   </tr>
-                ))}
-              {/*end table body */}
+                )}
+              </tbody>
             </table>
-            {data?.length === 0 && (
-              <div className="text-red-400 text-3xl my-4">
-                Oops! course not found
-              </div>
-            )}
           </div>
           <div className="mt-10 flex items-center justify-end mr-10">
             <Pagination
@@ -210,7 +202,6 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
                   "h-[1.5px] mt-5 bg-[#0369a1] rounded-full",
                 rpbRootClassName: "custom-root",
               }}
-              // withProgressBar={true}
               currentPage={meta?.page}
               itemsPerPage={meta?.limit}
               onPageChange={(pageNumber: number) => setPage(pageNumber)}
@@ -221,30 +212,12 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
               prevLabel={<ChevronLeft />}
               pageNeighbours={1}
             />
-            {/* <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMeta({ ...meta, page: meta?.page - 1 })}
-              disabled={meta?.page === 1}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setMeta({ ...meta, page: meta?.page + 1 })}
-              disabled={Math.ceil(meta?.total / meta?.limit) === meta?.page}
-            >
-              Next
-            </Button> */}
           </div>
         </div>
       </div>
-
       <Dialog onOpenChange={() => setOpen(!open)} open={open}>
         <AddBatchDialog setOpen={setOpen} />
       </Dialog>
-      
       {modalData && updateDialogIsOpen && (
         <Dialog
           onOpenChange={() => setUpdateDialogIsOpen(!updateDialogIsOpen)}

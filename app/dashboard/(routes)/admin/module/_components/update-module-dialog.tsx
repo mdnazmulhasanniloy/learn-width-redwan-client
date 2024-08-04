@@ -9,22 +9,23 @@ import {
 import Title from "@/components/ui/title";
 import React, { useEffect, useState } from "react";
 import ModuleForm from "./module-form";
-import { serverUrl } from "@/config";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { UpdateModuleSchema } from "@/schema/moduleSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdateModuleMutation } from "@/lib/redux/features/module/moduleApi";
-import { HandelToUpdateModule } from "@/actions/module";
+import { useUpdateModuleMutation } from "@/redux/api/modules";
+import { useGetAllCourseQuery } from "@/redux/api/courseApi";
+import { useGetBatchQuery } from "@/redux/api/batchApi";
+import { toast } from "sonner";
+import ErrorToast from "@/components/toast/errorToast";
 
 type IUpdateModuleProps = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   data: any;
 };
+
 const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
-  const [updateModule, { isLoading }] = useUpdateModuleMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
+  const [updateModuleFn, { isLoading }] = useUpdateModuleMutation();
   const [courses, setCourses] = useState([]);
   const [batches, setBatches] = useState([]);
   const [course, setCourse] = useState({
@@ -36,6 +37,16 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
     _id: data?.batch?._id,
   });
 
+  const query: Record<string, any> = { limit: 999999999 };
+  const batchQuery: Record<string, any> = {
+    limit: 999999999,
+    courseId: course?._id,
+  };
+
+  const { data: allCourses, isSuccess } = useGetAllCourseQuery(query);
+  const { data: allBatches, isSuccess: batchSuccess } =
+    useGetBatchQuery(batchQuery);
+
   const form = useForm<z.infer<typeof UpdateModuleSchema>>({
     resolver: zodResolver(UpdateModuleSchema),
     defaultValues: {
@@ -46,55 +57,52 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
     },
   });
 
-  //course search
   useEffect(() => {
-    setCourses([]);
-    fetch(`${serverUrl}course`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCourses(data?.data);
-      });
-  }, []);
-
-  //batch search
-  useEffect(() => {
-    setBatches([]);
-    fetch(`${serverUrl}batch?courseId=${course?._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setBatches(data?.data);
-      });
-  }, [course]);
+    if (isSuccess) {
+      setCourses(allCourses?.data || []);
+    }
+  }, [allCourses, isSuccess]);
 
   useEffect(() => {
-    const subscription = form.watch((value, { name, type }) => {
+    if (batchSuccess) {
+      setBatches(allBatches?.data || []);
+    }
+  }, [allBatches, batchSuccess]);
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
       if (name === "course") {
-        courses?.forEach((each: { _id: string; name: string }) => {
-          if (each?._id === value?.course) {
-            setCourse({
-              _id: each?._id,
-              name: each?.name,
-            });
-            return;
-          }
-        });
+        const selectedCourse = courses.find(
+          (each: { _id: string }) => each._id === value.course
+        );
+        if (selectedCourse) {
+          setCourse(selectedCourse);
+        }
       }
     });
     return () => subscription.unsubscribe();
-  });
+  }, [courses, form]);
 
   const onSubmit = async (values: z.infer<typeof UpdateModuleSchema>) => {
-    const id = await data?._id;
-    await HandelToUpdateModule(
-      id,
-      updateModule,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
+    console.log(values);
+    // const id = data?._id;
+    try {
+      toast.loading(`Updating...`, { id: "moduleId" });
+      const res: any = await updateModuleFn({
+        id: data?._id,
+        data: values,
+      }).unwrap();
+
+      if (res.success) {
+        toast.success(res.message, { id: "moduleId" });
+        form.reset();
+        setOpen(false);
+      }
+    } catch (error) {
+      ErrorToast(error, "moduleId");
+    }
   };
+
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
@@ -102,14 +110,12 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
           <Title>Update Module</Title>
         </DialogTitle>
         <DialogDescription>
-          change module data here. Click submit when you&apos;re done.
+          Change module data here. Click submit when you&apos;re done.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <ModuleForm
           setOpen={setOpen}
-          error={error}
-          success={success}
           form={form}
           onSubmit={onSubmit}
           isLoading={isLoading}

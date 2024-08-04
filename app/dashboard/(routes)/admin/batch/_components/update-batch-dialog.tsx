@@ -19,9 +19,10 @@ import { HandelToUpdateBatch } from "@/actions/batch";
 import { useGetAllCourseQuery } from "@/redux/api/courseApi";
 import { useUpdateBatchMutation } from "@/redux/api/batchApi";
 import { toast } from "sonner";
+import ErrorToast from "@/components/toast/errorToast";
 
 type IUpdateBatchProps = {
-  setOpen: (value: boolean | ((prev: boolean) => boolean))  => void;
+  setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
   data: any;
 };
 const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
@@ -48,7 +49,6 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
       isActive: data.isActive,
     },
   });
-  console.log(courses);
 
   useEffect(() => {
     setCourses([]);
@@ -84,13 +84,13 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
   const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
     try {
       toast.loading("Updating...", { id: "batch-Update" });
-      const res: any = await updateBatchFn(values);
+      const res: any = await updateBatchFn({ id: data?._id, data: values });
 
       if (res.success) {
         toast.success(res.message, { id: "batch-Update" });
       }
     } catch (error: any) {
-      toast.error(error.message, { id: "batch-Update" });
+      ErrorToast(error, "batch-update");
     }
   };
   return (

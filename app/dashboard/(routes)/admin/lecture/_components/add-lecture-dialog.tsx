@@ -7,14 +7,14 @@ import {
 } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
 import React, { useEffect, useState } from "react";
-import LectureForm from "./lecture-form";
-import { useAddLectureMutation } from "@/lib/redux/features/lecture/lectureApi";
+import LectureForm from "./lecture-form"; 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addLectureSchema } from "@/schema/lectureSchema";
 import { handelToAddLecture } from "@/actions/lecture";
 import { serverUrl } from "@/config";
+import { useAddLectureMutation } from "@/redux/api/lectureApi";
 
 type IAddLectureDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;

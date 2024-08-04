@@ -9,12 +9,10 @@ import {
   ChevronLeft,
   ChevronRight,
   FilePenLine,
-  Files,
   Plus,
   Trash2,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import AddModuleDialog from "./add-module-dialog";
 import UpdateModuleDialog from "./update-module-dialog";
 import { handelToActive, handelToDelete } from "@/actions/shared/shared";
@@ -24,6 +22,7 @@ import {
 } from "@/redux/api/modules";
 import { Pagination } from "react-pagination-bar";
 import EmptyData from "@/components/ui/emptyData";
+import { toast } from "sonner";
 
 type DataTableProps = {
   data: any[]; // Change 'any' to the actual type of your data array if possible
@@ -36,8 +35,7 @@ type DataTableProps = {
 const DataTable = ({
   data,
   meta,
-  setPage,
-  setLimit,
+  setPage, 
   setSearch,
 }: DataTableProps) => {
   const [deleteModule, deleteResult] = useRemoveModuleMutation();
@@ -50,9 +48,8 @@ const DataTable = ({
     if (deleteResult?.isLoading) {
       toast.loading("Deleting...", { id: "removeItem" });
     }
-
-    if (updateResult?.isLoading) {
-      toast.loading("Loading...", { id: "updateItem" });
+    if (deleteResult?.isSuccess) {
+      toast.success(deleteResult.data?.message, { id: "removeItem" });
     }
   }, [deleteResult, updateResult]);
 
@@ -66,7 +63,7 @@ const DataTable = ({
           <div className="flex flex-col md:flex-row md:justify-between gap-5">
             <input
               type="text"
-              placeholder="search modules"
+              placeholder="Search modules"
               onInput={(e) => setSearch((e.target as HTMLInputElement)?.value)}
               className="p-3 border border-sky-400"
             />
@@ -88,109 +85,102 @@ const DataTable = ({
                     <div className="font-semibold text-center">SL No:</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[20%]">
-                    <div className="font-semibold text-center">
-                      Module Name{" "}
-                    </div>
+                    <div className="font-semibold text-center">Module Name</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
-                    <div className="font-semibold text-center ">Module ID</div>
+                    <div className="font-semibold text-center">Module ID</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Course Name</div>
                   </th>
-
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Batch Name</div>
+                  </th>
+                  <th className="p-2 whitespace-nowrap w-[15%]">
+                    <div className="font-semibold text-center">Status</div>
                   </th>
                   <th className="p-2 whitespace-nowrap w-[15%]">
                     <div className="font-semibold text-center">Action</div>
                   </th>
                 </tr>
               </thead>
-
-              {/*start table body */}
-              {data?.length > 0 && (
-                <tbody className="text-sm divide-y divide-gray-100">
-                  {data?.length > 0 &&
-                    data?.map((item: any, i: number) => (
-                      <tr key={item?._id}>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          <div className="flex items-center">{i + 1}</div>
-                        </td>
-                        <td className="p-2 whitespace-nowrap   text-center">
-                          {item?.moduleName}
-                        </td>
-                        <td className="p-2 whitespace-nowrap t text-center">
-                          {item?.id}
-                        </td>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          {item?.course?.name}
-                        </td>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          {item?.batch?.name}
-                        </td>
-                        <td className="p-2 whitespace-nowrap text-center">
-                          {/* isActive */}
-                          <div
-                            className="mx-auto flex w-[100px] gap-2 justify-center"
-                            onClick={() =>
-                              handelToActive(
-                                item._id,
-                                !item?.isActive,
-                                updateModule
-                              )
-                            }
-                          >
-                            {/* Buttons */}
-                            {item?.isActive ? (
-                              <Badge
-                                variant="outline"
-                                className="bg-green-300 text-green-700 cursor-pointer"
-                              >
-                                Active
-                              </Badge>
-                            ) : (
-                              <Badge
-                                variant="outline"
-                                className="bg-red-300 text-red-700 cursor-pointer"
-                              >
-                                Destructive
-                              </Badge>
-                            )}
-                          </div>
-                          {/* isActive */}
-                        </td>
-                        <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
-                          <button
-                            onClick={() =>
-                              handelToDelete(item?._id, deleteModule)
-                            }
-                            className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
-                          >
-                            <Trash2 />
-                          </button>
-
-                          <button
-                            className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
-                            onClick={() => {
-                              setUpdateDialogIsOpen(true);
-                              setModuleData(item);
-                            }}
-                          >
-                            <FilePenLine />
-                          </button>
-
-                          <button className="text-green-700 bg-green-200 rounded-full cursor-pointer p-2 text-sm">
-                            <Files />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              )}
-              {/*end table body */}
+              <tbody className="text-sm divide-y divide-gray-100">
+                {data?.length > 0 ? (
+                  data?.map((item: any, i: number) => (
+                    <tr key={item?._id}>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        <div className="flex items-center">{i + 1}</div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.moduleName}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.id}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.course?.name}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        {item?.batch?.name}
+                      </td>
+                      <td className="p-2 whitespace-nowrap text-center">
+                        <div
+                          className="mx-auto flex w-[100px] gap-2 justify-center"
+                          onClick={() =>
+                            handelToActive(
+                              item._id,
+                              !item?.isActive,
+                              updateModule
+                            )
+                          }
+                        >
+                          {item?.isActive ? (
+                            <Badge
+                              variant="outline"
+                              className="bg-green-300 text-green-700 cursor-pointer"
+                            >
+                              Active
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="bg-red-300 text-red-700 cursor-pointer"
+                            >
+                              Inactive
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap flex gap-2 justify-center">
+                        <button
+                          onClick={() =>
+                            handelToDelete(item?._id, deleteModule)
+                          }
+                          className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
+                        >
+                          <Trash2 />
+                        </button>
+                        <button
+                          className="text-sky-700 bg-sky-200 p-2 text-sm rounded-full cursor-pointer"
+                          onClick={() => {
+                            setUpdateDialogIsOpen(true);
+                            setModuleData(item);
+                          }}
+                        >
+                          <FilePenLine />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={7} className="text-center p-5">
+                      <EmptyData />
+                    </td>
+                  </tr>
+                )}
+              </tbody>
             </table>
-            {data?.length === 0 && <EmptyData />}
           </div>
           <div className="mt-10 flex items-center justify-end mr-10">
             <Pagination
@@ -204,7 +194,6 @@ const DataTable = ({
                   "h-[1.5px] mt-5 bg-[#0369a1] rounded-full",
                 rpbRootClassName: "custom-root",
               }}
-              // withProgressBar={true}
               currentPage={meta?.page}
               itemsPerPage={meta?.limit}
               onPageChange={(pageNumber: number) => setPage(pageNumber)}
@@ -218,14 +207,11 @@ const DataTable = ({
           </div>
         </div>
       </div>
-      <Dialog onOpenChange={() => setOpen(!open)} open={open}>
+      <Dialog onOpenChange={setOpen} open={open}>
         <AddModuleDialog setOpen={setOpen} />
       </Dialog>
       {moduleData && updateDialogIsOpen && (
-        <Dialog
-          onOpenChange={() => setUpdateDialogIsOpen(updateDialogIsOpen)}
-          open={updateDialogIsOpen}
-        >
+        <Dialog onOpenChange={setUpdateDialogIsOpen} open={updateDialogIsOpen}>
           <UpdateModuleDialog
             setOpen={setUpdateDialogIsOpen}
             data={moduleData}

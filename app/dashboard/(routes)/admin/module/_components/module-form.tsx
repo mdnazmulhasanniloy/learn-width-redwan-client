@@ -1,5 +1,5 @@
-import FormError from "@/components/form-error";
-import FormSuccess from "@/components/form-success";
+import React from "react";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,15 +11,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { Select } from "@radix-ui/react-select";
-import { Loader2 } from "lucide-react";
-import React from "react";
+import { cn } from "@/lib/utils"; 
+import { Loader2 } from "lucide-react"; 
 
 type IModuleFormProps = {
   form: any;
@@ -39,13 +38,11 @@ const ModuleForm = ({
   batches,
 }: IModuleFormProps) => {
   const { isSubmitting } = form.formState;
+
   return (
     <div className="py-4">
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 mt-8 "
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-8">
           <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-5">
             <FormField
               control={form.control}
@@ -56,6 +53,7 @@ const ModuleForm = ({
                   <FormControl>
                     <Input
                       {...field}
+                      value={field.value || ""}
                       disabled={isSubmitting || isLoading}
                       placeholder="Enter Module Name"
                       className={cn(
@@ -80,7 +78,7 @@ const ModuleForm = ({
                   <Select
                     disabled={isSubmitting || isLoading}
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value || ""}
                   >
                     <FormControl>
                       <SelectTrigger
@@ -110,6 +108,7 @@ const ModuleForm = ({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="batch"
@@ -119,7 +118,7 @@ const ModuleForm = ({
                   <Select
                     disabled={isSubmitting || isLoading}
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value || ""}
                   >
                     <FormControl>
                       <SelectTrigger
@@ -128,7 +127,7 @@ const ModuleForm = ({
                           form?.formState?.errors?.batch && "border-red-400"
                         )}
                       >
-                        <SelectValue placeholder="Select a batch" />
+                        <SelectValue placeholder="Select a Batch" />
                       </SelectTrigger>
                     </FormControl>
                     <FormMessage />
@@ -141,7 +140,7 @@ const ModuleForm = ({
                         ))
                       ) : (
                         <h2 className="text-red-400 text-center text-sm py-4">
-                          No Course Found!
+                          No Batch Found!
                         </h2>
                       )}
                     </SelectContent>
@@ -154,7 +153,7 @@ const ModuleForm = ({
           <div className="flex justify-end gap-4">
             <Button
               type="button"
-              variant={"outline"}
+              variant="outline"
               onClick={() => {
                 setOpen(false);
                 form.reset();

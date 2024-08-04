@@ -16,9 +16,8 @@ const ModulePage = () => {
 
   query["limit"] = limit;
   query["page"] = page;
-  query["sortOrder"] = sortOrder;
+  query["sortOrder"] = sortOrder; 
   query["searchTerm"] = search;
-
   const { data, isLoading, isSuccess } = useGetModuleQuery({ ...query });
 
   useEffect(() => {
