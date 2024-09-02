@@ -1,4 +1,5 @@
-import toast from "react-hot-toast";
+import ErrorToast from "@/components/toast/errorToast"; 
+import { toast } from "sonner";
 import Swal from "sweetalert2";
 
 export const handelToActive = async (
@@ -31,14 +32,30 @@ export const handelToDelete = async (id: string, removeItem: Function) => {
   }).then(async (result: any) => {
     if (result.isConfirmed) {
       try {
-        const res = await removeItem(id);
-        if (res.data.success) {
-          toast.success(res.data.message, { id: "removeItem" });
-        } else if (!res.data.success) {
-          toast.error(res.data.message, { id: "removeItem" });
-        }
+        const res = await removeItem(id).unwrap() 
+        toast.success(res.message, {id:"removeItem", duration: 3000}); 
       } catch (error: any) {
-        toast.error(error.message, { id: "removeItem" });
+        ErrorToast(error, "removeItem") 
+      }
+    }
+  });
+};
+export const ConfirmModal = async (id: string, action: Function, buttonText?:string, toastId?:string) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: buttonText || "Yes, Do it!",
+  }).then(async (result: any) => {
+    if (result.isConfirmed) {
+      try {
+        const res = await action(id).unwrap() 
+        toast.success(res.message, {id:toastId, duration: 3000}); 
+      } catch (error: any) {
+        ErrorToast(error, toastId) 
       }
     }
   });

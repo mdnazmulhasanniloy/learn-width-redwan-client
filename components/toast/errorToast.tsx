@@ -20,7 +20,7 @@ const ErrorToast = (error: any, toastId?: number | string) => {
     errorMessage,
     {
       id: toastId,
-      duration: 2000,
+      duration: 3000,
     }
     // {
     // variant: "destructive",

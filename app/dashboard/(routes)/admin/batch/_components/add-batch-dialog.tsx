@@ -12,11 +12,8 @@ import React, { useEffect, useState } from "react";
 import BatchForm from "./batch-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { batchSchema } from "@/schema/batchSchema";
-import { serverUrl } from "@/config";
-// import { useAddBatchMutation } from "@/lib/redux/features/batch/batchSlice";
-import { z } from "zod";
-import { HandelToAddBatch } from "@/actions/batch";
+import { batchSchema } from "@/schema/batchSchema"; 
+import { z } from "zod"; 
 import ErrorToast from "@/components/toast/errorToast";
 import { useAddBatchMutation } from "@/redux/api/batchApi";
 import { toast } from "sonner";
@@ -26,16 +23,17 @@ type IAddBatchDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
 const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
-  const [addBatch, { isLoading }] = useAddBatchMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
-  const [courses, setCourses] = useState([]);
-  const [courseId, setCourseId] = useState({});
-  const [search, setSearch] = useState<string | undefined>("");
-  const [meta, setMeta] = useState({ limit: 2, page: 1, total: 0 });
-  const courseQuery: Record<string, any> = {};
-  courseQuery["limit"] = 999999999;
-  const { data, isSuccess } = useGetAllCourseQuery({ ...courseQuery });
+  const [addBatch, { isLoading }] = useAddBatchMutation(); 
+  const [courseId, setCourseId] = useState({}); 
+
+  const courseQuery:Record<string, any> ={}
+  courseQuery["limit"]=999999999999999
+  const {data:coursesRes} = useGetAllCourseQuery(courseQuery)
+  const courses = coursesRes?.data || []
+
+
+
+
   const form = useForm<z.infer<typeof batchSchema>>({
     resolver: zodResolver(batchSchema),
     defaultValues: {
@@ -43,12 +41,7 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
     },
   });
 
-  useEffect(() => {
-    setCourses([]);
-    if (isSuccess) {
-      setCourses(data?.data);
-    }
-  }, [data?.data, isSuccess]);
+  
 
   useEffect(() => {
     const subscription = form?.watch((value, { name, type }) => {
@@ -72,6 +65,10 @@ const AddBatchDialog = ({ setOpen }: IAddBatchDialog) => {
     try {
       const res = await addBatch(values).unwrap();
       toast.success(res.message, { id: "batch" });
+      if(res.success){
+        form.reset();
+        setOpen(false);
+      }
     } catch (error) {
       ErrorToast(error, "batch");
     }

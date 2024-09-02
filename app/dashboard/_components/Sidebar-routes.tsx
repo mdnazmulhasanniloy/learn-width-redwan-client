@@ -8,6 +8,7 @@ import {
   Home,
   Layout,
   List,
+  Users,
 } from "lucide-react";
 import SidebarItem from "./sidebar-item";
 import { usePathname } from "next/navigation";
@@ -44,6 +45,11 @@ const adminRoutes = [
     icon: BookOpen,
     label: "lecture",
     href: "/dashboard/admin/lecture",
+  },
+  {
+    icon: Users ,
+    label: "All Users",
+    href: "/dashboard/admin/users",
   },
   {
     icon: Home,

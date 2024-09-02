@@ -12,10 +12,7 @@ import BatchForm from "./batch-form";
 import { z } from "zod";
 import { UpdateBatchSchema } from "@/schema/batchSchema";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-// import { useUpdateBatchMutation } from "@/lib/redux/features/batch/batchSlice";
-import { serverUrl } from "@/config";
-import { HandelToUpdateBatch } from "@/actions/batch";
+import { zodResolver } from "@hookform/resolvers/zod";  
 import { useGetAllCourseQuery } from "@/redux/api/courseApi";
 import { useUpdateBatchMutation } from "@/redux/api/batchApi";
 import { toast } from "sonner";
@@ -26,18 +23,17 @@ type IUpdateBatchProps = {
   data: any;
 };
 const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
-  const [updateBatchFn, { isLoading }] = useUpdateBatchMutation();
-  const [courses, setCourses] = useState([]);
+  const [updateBatchFn, { isLoading }] = useUpdateBatchMutation(); 
   const [courseId, setCourseId] = useState({
     name: data.courseId.name,
     _id: data?.courseId?._id,
   });
-  const CourseQuery: Record<string, any> = {};
-  CourseQuery["limit"] = 999999999;
+  
+  const courseQuery:Record<string, any> ={}
+  courseQuery["limit"]=999999999999999
+  const {data:coursesRes} = useGetAllCourseQuery(courseQuery)
+  const courses = coursesRes?.data || []
 
-  const { data: course, isSuccess } = useGetAllCourseQuery({
-    ...CourseQuery,
-  });
 
   const form = useForm<z.infer<typeof UpdateBatchSchema>>({
     resolver: zodResolver(UpdateBatchSchema),
@@ -49,13 +45,7 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
       isActive: data.isActive,
     },
   });
-
-  useEffect(() => {
-    setCourses([]);
-    if (isSuccess) {
-      setCourses(course?.data);
-    }
-  }, [isSuccess, course]);
+ 
 
   useEffect(() => {
     const subscription = form?.watch((value, { name, type }) => {
@@ -83,16 +73,20 @@ const UpdateBatchDialog = ({ data, setOpen }: IUpdateBatchProps) => {
 
   const onSubmit = async (values: z.infer<typeof UpdateBatchSchema>) => {
     try {
-      toast.loading("Updating...", { id: "batch-Update" });
-      const res: any = await updateBatchFn({ id: data?._id, data: values });
+      toast.loading("Updating...", { id: "batch-Update", duration:3000 });
+      const res: any = await updateBatchFn({ id: data?._id, data: values }).unwrap();
+      toast.success(res.message, { id: "batch-Update",  duration:3000 });
 
       if (res.success) {
-        toast.success(res.message, { id: "batch-Update" });
+        form.reset()
+        setOpen(false);
       }
+
     } catch (error: any) {
       ErrorToast(error, "batch-update");
     }
   };
+  
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>

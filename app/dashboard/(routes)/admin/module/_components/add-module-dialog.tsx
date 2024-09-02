@@ -23,19 +23,22 @@ type IAddModuleDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
 const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
-  const [addModule, { isLoading }] = useAddModuleMutation();
-  const [courses, setCourses] = useState([]);
-  const [batches, setBatches] = useState([]);
+  const [addModule, { isLoading }] = useAddModuleMutation(); 
   const [course, setCourse] = useState<any>({});
-  const query: Record<string, any> = {};
-  const batchQuery: Record<string, any> = {};
-  query["limit"] = 999999999;
-  batchQuery["limit"] = 999999999;
-  batchQuery["courseId"] = course?._id;
-  const { data, isSuccess } = useGetAllCourseQuery({ ...query });
-  const { data: batch, isSuccess: batchSuccess } = useGetBatchQuery({
-    ...batchQuery,
-  });
+
+  const courseQuery:Record<string, any> ={}
+  courseQuery["limit"]=999999999999999
+  const {data:coursesRes} = useGetAllCourseQuery(courseQuery)
+  const courses = coursesRes?.data || []
+
+
+  const batchQuery:Record<string, any> ={}
+  batchQuery["limit"]=999999999999999
+  batchQuery["courseId"]=course?._id
+  const {data:batchesRes}= useGetBatchQuery(batchQuery)
+  const batches = batchesRes?.data ||[]
+
+
   const form = useForm<z.infer<typeof moduleSchema>>({
     resolver: zodResolver(moduleSchema),
     defaultValues: {
@@ -43,16 +46,7 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
     },
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      setCourses([]);
-      setCourses(data?.data);
-    }
-    if (batchSuccess) {
-      setBatches([]);
-      setBatches(batch?.data);
-    }
-  }, [batch?.data, batchSuccess, data?.data, isSuccess]);
+   
 
   useEffect(() => {
     const subscription = form.watch((value, { name, type }) => {
@@ -70,6 +64,8 @@ const AddModuleDialog = ({ setOpen }: IAddModuleDialog) => {
     });
     return () => subscription.unsubscribe();
   });
+
+
 
   const onSubmit = async (values: z.infer<typeof moduleSchema>) => {
     toast.loading("Batch is Adding...", { id: "addBatch" });

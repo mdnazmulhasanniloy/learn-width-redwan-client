@@ -1,6 +1,6 @@
 "use client";
 
-import { handelToUpdateLecture } from "@/actions/lecture";
+import { handelToUpdateLecture, ValidVideoTypes } from "@/actions/lecture";
 import {
   DialogContent,
   DialogDescription,
@@ -8,14 +8,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Title from "@/components/ui/title";
-import { serverUrl } from "@/config";
-import { useUpdateLectureMutation } from "@/lib/redux/features/lecture/lectureApi";
+import { serverUrl } from "@/config"; 
 import { updateLectureSchema } from "@/schema/lectureSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import LectureForm from "./lecture-form";
+import { useGetModuleQuery } from "@/redux/api/modules";
+import { useGetBatchQuery } from "@/redux/api/batchApi";
+import { useGetAllCourseQuery } from "@/redux/api/courseApi";
+import { useUpdateLectureMutation } from "@/redux/api/lectureApi";
+import { toast } from "sonner";
+import ErrorToast from "@/components/toast/errorToast";
 
 type IUpdateLectureProps = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
@@ -23,12 +28,6 @@ type IUpdateLectureProps = {
 };
 const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
   const [updateLecture, { isLoading }] = useUpdateLectureMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
-  const [video, setVideo] = useState<File | undefined>();
-  const [courses, setCourses] = useState([]);
-  const [batches, setBatches] = useState([]);
-  const [modules, setModules] = useState([]);
   const [course, setCourse] = useState({
     name: data?.courseId?.name,
     _id: data?.courseId?._id,
@@ -42,6 +41,30 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
     name: data?.moduleId?.moduleName,
     _id: data?.moduleId?._id,
   });
+  const courseQuery:Record<string, any> ={}
+  courseQuery["limit"]=999999999999999
+  const {data:coursesRes} = useGetAllCourseQuery(courseQuery)
+  const courses = coursesRes?.data || []
+
+
+  const batchQuery:Record<string, any> ={}
+  batchQuery["limit"]=999999999999999
+  batchQuery["courseId"]=course?._id
+  const {data:batchesRes}= useGetBatchQuery(batchQuery)
+  const batches = batchesRes?.data ||[]
+  
+  const moduleQuery:Record<string, any> ={}
+  moduleQuery["limit"]=999999999999999
+  moduleQuery["batch"]=batch?._id
+  const {data: modulesRes}= useGetModuleQuery(moduleQuery)
+  const modules = modulesRes?.data ||[]
+
+
+ 
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>("");
+  const [video, setVideo] = useState<File | undefined>(); 
+  
 
   const form = useForm<z.infer<typeof updateLectureSchema>>({
     resolver: zodResolver(updateLectureSchema),
@@ -95,37 +118,7 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
     });
     return () => subscription.unsubscribe();
   });
-
-  //course search
-  useEffect(() => {
-    setCourses([]);
-    fetch(`${serverUrl}course`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCourses(data?.data);
-      });
-  }, []);
-
-  //batch search
-  useEffect(() => {
-    setBatches([]);
-    fetch(`${serverUrl}batch?courseId=${course?._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setBatches(data?.data);
-      });
-  }, [course]);
-
-  //module search
-  useEffect(() => {
-    setModules([]);
-    fetch(`${serverUrl}module?batch=${batch?._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setModules(data?.data);
-      });
-  }, [batch]);
-
+  
   const handleVideoChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -136,22 +129,38 @@ const UpdateLectureDialog = ({ data, setOpen }: IUpdateLectureProps) => {
   };
 
   const onSubmit = async (values: z.infer<typeof updateLectureSchema>) => {
+    const toastId = {id:"...", duration: 3000}
+toast.loading("Please wait...", toastId,)
     const id = await data?._id;
     values = {
-      ...values,
+      ...values, 
       video: video,
-    };
+    }; 
+  const formData = new FormData();
 
-    await handelToUpdateLecture(
-      id,
-      updateLecture,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
-  };
+  try {
+    if (values?.video) {
+      if (!ValidVideoTypes.includes(values.video.type)) {
+        setError("Only .mp4, .webm and .ogg formats are supported.");
+        return;
+      }
+      formData.append("video", values.video);
+    }
+
+    const value = JSON.stringify(values);
+    formData.append("data", value);
+  const res = await updateLecture({id, data:formData}).unwrap()
+  toast.success(res?.message, toastId)
+  if(res.success){
+    form.reset()
+    setOpen(false)
+  }
+  
+} catch (error) {
+  ErrorToast(error, "...")
+}
+  
+  }
 
   return (
     <DialogContent className="sm:max-w-lg">

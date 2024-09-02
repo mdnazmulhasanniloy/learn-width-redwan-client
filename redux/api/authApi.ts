@@ -58,6 +58,37 @@ const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.user],
     }),
+    // getAllUsers: build.query({
+    //   query: (arg: Record<string, any>) => ({
+    //     url: `/users`,
+    //     method: "GET",
+    //     params: arg,
+    //   }),
+    //   providesTags: [tagTypes.user],
+    // }),
+
+    getAllUsers: build.query({
+      query: (arg: Record<string, any>) => ({
+        url: `${USER_URL}/`,
+        method: "GET",
+        params: arg,
+      }),
+      providesTags: [tagTypes.user],
+    }),
+    blockUser: build.mutation({
+      query: (id) => ({
+        url: `${USER_URL}/block-user/${id}`,
+        method: "PATCH", 
+      }),
+      invalidatesTags: [tagTypes.user],
+    }),
+    unblockUser: build.mutation({
+      query: (id) => ({
+        url: `${USER_URL}/unblock-user/${id}`,
+        method: "PATCH", 
+      }),
+      invalidatesTags: [tagTypes.user],
+    }),
   }),
 });
 
@@ -68,4 +99,7 @@ export const {
   useResendOtpMutation,
   useClearDeviceMutation,
   useSignOutMutation,
+  useGetAllUsersQuery,
+  useBlockUserMutation,
+  useUnblockUserMutation
 } = authApi;

@@ -175,7 +175,7 @@ const DataTable = ({ data, meta, setPage, setSearch }: DataTableProps) => {
                           }
                           className="text-red-700 bg-red-200 p-2 text-sm rounded-full cursor-pointer"
                         >
-                          <Trash2 />
+                          <Trash2  />
                         </button>
 
                         <button

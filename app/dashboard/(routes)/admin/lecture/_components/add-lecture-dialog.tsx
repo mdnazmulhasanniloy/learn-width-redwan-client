@@ -11,33 +11,52 @@ import LectureForm from "./lecture-form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addLectureSchema } from "@/schema/lectureSchema";
-import { handelToAddLecture } from "@/actions/lecture";
-import { serverUrl } from "@/config";
+import { addLectureSchema } from "@/schema/lectureSchema"; 
 import { useAddLectureMutation } from "@/redux/api/lectureApi";
+import { useGetAllCourseQuery } from "@/redux/api/courseApi";
+import { useGetBatchQuery } from "@/redux/api/batchApi";
+import { useGetModuleQuery } from "@/redux/api/modules";
+import { toast } from "sonner";
+import ErrorToast from "@/components/toast/errorToast";
 
 type IAddLectureDialog = {
   setOpen: (value: boolean | ((prev: boolean) => boolean)) => void;
 };
-
+export const ValidVideoTypes = ["video/mp4", "video/webm", "video/ogg"];
 const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
-  const [addLecture, { isLoading }] = useAddLectureMutation();
-  const [success, setSuccess] = useState<string | undefined>("");
-  const [error, setError] = useState<string | undefined>("");
-  const [video, setVideo] = useState<File | null>(null);
-  const [courses, setCourses] = useState([]);
-  const [batches, setBatches] = useState([]);
-  const [modules, setModules] = useState([]);
-
   const [course, setCourse] = useState<{ _id: string; name: string } | null>(
     null
   );
   const [batch, setBatch] = useState<{ _id: string; name: string } | null>(
     null
-  );
-  const [module, setModule] = useState<{ _id: string; name: string } | null>(
-    null
-  );
+  ); 
+
+  const [addLecture, { isLoading }] = useAddLectureMutation();
+  
+  const courseQuery:Record<string, any> ={}
+  courseQuery["limit"]=999999999999999
+  const {data:coursesRes} = useGetAllCourseQuery(courseQuery)
+  const courses = coursesRes?.data || []
+
+
+  const batchQuery:Record<string, any> ={}
+  batchQuery["limit"]=999999999999999
+  batchQuery["courseId"]=course?._id
+  const {data:batchesRes}= useGetBatchQuery(batchQuery)
+  const batches = batchesRes?.data ||[]
+  
+  const moduleQuery:Record<string, any> ={}
+  moduleQuery["limit"]=999999999999999
+  moduleQuery["batch"]=batch?._id
+  const {data: modulesRes}= useGetModuleQuery(moduleQuery)
+  const modules = modulesRes?.data ||[]
+
+
+  const [success, setSuccess] = useState<string | undefined>("");
+  const [error, setError] = useState<string | undefined>("");
+  const [video, setVideo] = useState<File | null>(null); 
+
+
 
   const form = useForm<z.infer<typeof addLectureSchema>>({
     resolver: zodResolver(addLectureSchema),
@@ -81,36 +100,7 @@ const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
     return () => subscription.unsubscribe();
   });
 
-  //course search
-  useEffect(() => {
-    setCourses([]);
-    fetch(`${serverUrl}course`)
-      .then((response) => response.json())
-      .then((data) => {
-        setCourses(data?.data);
-      });
-  }, []);
-
-  //batch search
-  useEffect(() => {
-    setBatches([]);
-    fetch(`${serverUrl}batch?courseId=${course?._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setBatches(data?.data);
-      });
-  }, [course]);
-
-  //module search
-  useEffect(() => {
-    console.log("batch");
-    // setBatches([]);
-    fetch(`${serverUrl}module?batch=${batch?._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setModules(data?.data);
-      });
-  }, [batch]);
+ 
 
   const handleVideoChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -127,15 +117,39 @@ const AddLectureDialog = ({ setOpen }: IAddLectureDialog) => {
       ...values,
       video: video,
     };
-    await handelToAddLecture(
-      addLecture,
-      values,
-      setSuccess,
-      setError,
-      setOpen,
-      form
-    );
+
+    toast.loading("Loading...", {id:"...", duration: 3000});
+    try { 
+    if (
+      values.video &&
+      !ValidVideoTypes.find((type) => type === values.video.type)
+    ) {
+      ErrorToast("Only .mp4, .webm and .ogg formats are supported.", "...");
+      return;
+    } else if(values?.video ===null){
+      toast.error("Please select a video file.", {id:"...", duration:3000});
+      return;
+    }
+ 
+    const formData = new FormData();
+
+    formData.append("video", values.video); // Use consistent key
+
+    const value = JSON.stringify(values);
+    formData.append("data", value);
+
+      const res:any = await addLecture(formData).unwrap() 
+      toast.success(res.message, {id:"...", duration:3000})
+      if(res.success){
+        setOpen(false);
+      form.reset();
+      }
+    } catch (error) {
+      ErrorToast(error, "...")
+    } 
   };
+
+
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>

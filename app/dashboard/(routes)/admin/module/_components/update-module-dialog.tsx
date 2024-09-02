@@ -25,9 +25,7 @@ type IUpdateModuleProps = {
 };
 
 const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
-  const [updateModuleFn, { isLoading }] = useUpdateModuleMutation();
-  const [courses, setCourses] = useState([]);
-  const [batches, setBatches] = useState([]);
+  const [updateModuleFn, { isLoading }] = useUpdateModuleMutation(); 
   const [course, setCourse] = useState({
     name: data.course.name,
     _id: data?.course?._id,
@@ -37,15 +35,17 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
     _id: data?.batch?._id,
   });
 
-  const query: Record<string, any> = { limit: 999999999 };
-  const batchQuery: Record<string, any> = {
-    limit: 999999999,
-    courseId: course?._id,
-  };
+  const courseQuery:Record<string, any> ={}
+  courseQuery["limit"]=999999999999999
+  const {data:coursesRes} = useGetAllCourseQuery(courseQuery)
+  const courses = coursesRes?.data || []
 
-  const { data: allCourses, isSuccess } = useGetAllCourseQuery(query);
-  const { data: allBatches, isSuccess: batchSuccess } =
-    useGetBatchQuery(batchQuery);
+
+  const batchQuery:Record<string, any> ={}
+  batchQuery["limit"]=999999999999999
+  batchQuery["courseId"]=course?._id
+  const {data:batchesRes}= useGetBatchQuery(batchQuery)
+  const batches = batchesRes?.data ||[]
 
   const form = useForm<z.infer<typeof UpdateModuleSchema>>({
     resolver: zodResolver(UpdateModuleSchema),
@@ -57,18 +57,7 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
     },
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      setCourses(allCourses?.data || []);
-    }
-  }, [allCourses, isSuccess]);
-
-  useEffect(() => {
-    if (batchSuccess) {
-      setBatches(allBatches?.data || []);
-    }
-  }, [allBatches, batchSuccess]);
-
+ 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name === "course") {
@@ -83,18 +72,19 @@ const UpdateModuleDialog = ({ data, setOpen }: IUpdateModuleProps) => {
     return () => subscription.unsubscribe();
   }, [courses, form]);
 
-  const onSubmit = async (values: z.infer<typeof UpdateModuleSchema>) => {
-    console.log(values);
-    // const id = data?._id;
+
+
+  const onSubmit = async (values: z.infer<typeof UpdateModuleSchema>) => { 
     try {
-      toast.loading(`Updating...`, { id: "moduleId" });
+      toast.loading(`Updating...`, { id: "moduleId", duration: 3000 });
       const res: any = await updateModuleFn({
         id: data?._id,
         data: values,
       }).unwrap();
+      
+      toast.success(res.message, { id: "moduleId", duration:3000 });
 
       if (res.success) {
-        toast.success(res.message, { id: "moduleId" });
         form.reset();
         setOpen(false);
       }
